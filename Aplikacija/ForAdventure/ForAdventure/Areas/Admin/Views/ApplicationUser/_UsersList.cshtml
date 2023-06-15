@@ -1,0 +1,38 @@
+﻿@model IEnumerable<ApplicationUser>
+
+<div>
+    @foreach (var obj in Model)
+    {
+        <div class="mb-3 p-3 d-flex flex-row flex-wrap justify-content-between align-items-baseline" style="background-color:#f8f9fa">
+            <div class="ps-4">
+                @if (obj.ImageURL == null)
+                {
+                    <img src="~/images/profilePicture/withoutImage.jpg"
+                         class="img-fluid rounded-circle border border-dark border-3" style="width: 80px; height:80px" />
+                }
+                else
+                {
+                    <img src="@obj.ImageURL" class="img-fluid rounded-circle border border-dark border-3"
+                         style="width: 80px; height:80px" />
+                }
+
+            </div>
+            <div class="text-md-center">
+                @obj.NameInApplication
+            </div>
+            <div class="text-md-center">
+                @obj.Email
+            </div>
+            <div class="text-md-center">
+                @obj.Role
+            </div>
+            <div class="text-md-center">
+                @obj.ReportsCount
+            </div>
+            <div class="pe-4">
+                <a asp-area="Admin" asp-controller="ApplicationUser" asp-action="Edit" asp-route-id="@obj.Id"
+                   class="btn btn-md btn-primary mx-2">Details</a>
+            </div>
+        </div>
+    }
+</div>

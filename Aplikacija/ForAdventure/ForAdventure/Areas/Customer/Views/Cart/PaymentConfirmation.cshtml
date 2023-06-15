@@ -1,0 +1,24 @@
+﻿@using System.Globalization;
+@model IList<ForAdventure.Models.ViewModels.ConfirmationVM>
+@{
+    ViewData["Title"] = "Payment confirmation";
+}
+<div class="">
+    <h1 class="text-center pt-4 pb-2">Payment confirmation</h1>
+    <p class="h4 text-center pt-3">Thank you for choosing us</p>
+    <p class="h4 text-center pt-1">Check your e-mail for details of your reservations</p>
+    <hr />
+    @foreach (var item in Model)
+    {
+        <div class="row">
+            <h4> @item.Name</h4>
+            <p class="mb-0"><i class="bi bi-calendar3"></i>&nbsp; Start: @item.DateStart</p>
+            <p class="mb-1"><i class="bi bi-calendar3"></i>&nbsp; End: @item.DateEnd</p>
+            <p>Price: @item.Count x @item.TotalPrice.ToString("C", new CultureInfo("en-MNE"))</p>
+        </div>
+        <hr />
+    }
+</div>
+
+
+

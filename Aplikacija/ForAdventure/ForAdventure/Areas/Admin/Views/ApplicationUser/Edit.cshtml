@@ -1,0 +1,235 @@
+﻿@model ForAdventure.Models.ViewModels.UserVM
+
+<div class="row">
+    <div style="width:20%">
+    </div>
+    <div class="col-md" style="width:60%">
+        <br />
+        <h3 class="text-md-center">User profile</h3>
+        <br />
+        <br />
+        <form id="profile-form" method="post" class="border-start border-end ps-md-3 pe-md-3" asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert" enctype="multipart/form-data"></div>
+            <input asp-for="@Model.User.Id" hidden />
+            <div class="row mb-3 align-items-md-center">
+                <div class="col-md-4 ">
+                    <div class="col-md">
+                        <div class="d-md-flex justify-content-md-center mb-md-2">
+                            @if (Model.User.ImageURL == null)
+                            {
+                                <img src="~/images/profilePicture/withoutImage.jpg"
+                                     class="img-fluid rounded-circle border border-dark border-3" style="width: 80px; height:80px" />
+                            }
+                            else
+                            {
+                                <img src="@Model.User.ImageURL" class="img-fluid rounded-circle border border-dark border-3"
+                                     style="width: 80px; height:80px" />
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5 form-floating">
+                    <input asp-for="User.NameInApplication" class="form-control " aria-required="true" placeholder="Username" disabled />
+                    <label asp-for="User.NameInApplication">Username</label>
+                    <span asp-validation-for="User.NameInApplication" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row pt-md-5" >
+                <div class="col-md-6 form-floating ">
+                    <input asp-for="User.Name" class="form-control " aria-required="true" placeholder="Name" disabled />
+                    <label asp-for="User.Name">Name</label>
+                    <span asp-validation-for="User.Name" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 form-floating ">
+                    <input asp-for="User.LastName" class="form-control " aria-required="true" placeholder="Last name" disabled />
+                    <label asp-for="User.LastName">Last name</label>
+                    <span asp-validation-for="User.LastName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row pt-md-5 ">
+                <div class="form-floating mb-3" style="width:100%">
+                    <input asp-for="User.Email" class="form-control" aria-required="true" placeholder="Email" disabled />
+                    <label asp-for="User.Email">Email</label>
+                    <span asp-validation-for="User.Email" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row pt-md-5">
+                <div class="col-md-6 form-floating">
+                    <input asp-for="User.City" class="form-control " aria-required="true" placeholder="City" disabled />
+                    <label asp-for="User.City">City</label>
+                    <span asp-validation-for="User.City" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 form-floating ">
+                    <input asp-for="User.Address" class="form-control " aria-required="true" placeholder="Address" disabled />
+                    <label asp-for="User.Address">Address</label>
+                    <span asp-validation-for="User.Address" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row  pt-md-5">
+                <div class="col-md-6 form-floating ">
+                    <input asp-for="User.PhoneNumber" class="form-control" placeholder="Please enter your phone number." disabled />
+                    <label asp-for="User.PhoneNumber">Phone number</label>
+                    <span asp-validation-for="User.PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 form-floating">
+                    <input asp-for="User.DateRegistration" class="form-control" aria-required="true" placeholder="DateRegistration" disabled />
+                    <label asp-for="User.DateRegistration">Date of registration</label>
+                    <span asp-validation-for="User.DateRegistration" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-floating pt-md-5">
+                <select asp-for="User.Role" asp-items="ViewBag.role" class="form-select" placeholder="Select">
+                    <option disabled selected>Select</option>
+                </select>
+            </div>
+            <div id="numberOfReports" class="pt-md-4">
+                <a  class="btn" style="text-decoration:none" onclick="ShowOrHide('reports')">
+                    Reports: @Model.Count
+                </a>
+                <hr>
+                <div id="reports" class="" style="display:none">
+                    @foreach(var report in Model.Reports)
+                    {
+                        
+                        @if(!report.Checked)
+                        {
+                            <div class="mt-md-2">
+                                <h5 class="p-1" style="width:13%; color:black;  background-color: orangered">Reason:</h5>
+                                <p class="">@report.Text</p>
+                            </div>
+                            <div class="w-100 d-md-flex justify-content-md-end pt-md-4">
+                                <a class="btn " onclick="check('@report.Id')"
+                                   style="width:20%; color:black;  background-color: lawngreen">Check</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mt-md-2">
+                                <h5 class="p-1" style="width:13%; color:black;  background-color: lawngreen">Reason:</h5>
+                                <p class="">@report.Text</p>
+                            </div>
+                            <div class="w-100 d-md-flex justify-content-md-end pt-md-4 " onclick="reloadReportsDiv()">
+                                <a class="btn " style="width:20%; color:black;  background-color: lawngreen">Check</a>
+                            </div>
+                        }
+                        <hr />
+                    }
+                </div>
+            </div>
+            <div class="w-100 d-md-flex justify-content-md-end pt-md-4">
+                <a class="btn btn-danger" onclick="Delete('/Admin/ApplicationUser/Delete/@Model.User.Id')"
+                   style="width:20%;">Delete</a>
+            </div>
+            <div class="w-100 d-md-flex justify-content-md-end pt-md-4">
+                <button type="submit" class=" btn btn-md btn-primary me-md-4" style="width:30%">Save</button>
+                <a asp-area="Admin" asp-controller="ApplicationUser" asp-action="Index" class="btn btn-md btn-outline-secondary" style="width:30%">Back to user list</a>
+            </div>
+        </form>
+    </div>
+    <div style="width:20%">
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function ShowOrHide(id){
+            var div = document.getElementById(id);
+
+            if (div.style.display === "none") 
+            {
+                div.style.display = "block";
+                reloadReportsDiv();
+            }
+            else 
+            {
+                div.style.display = "none";
+            }
+        };
+
+        function Delete(url) {
+            console.log('pritisnuto');
+            console.log(url);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url:url,
+                        type:'DELETE',
+                        success: function(data){
+                            if(data.success)
+                            {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.href = data.redirectUrl;
+                                });
+                            }
+                        }
+                    })
+                }
+            })
+        };
+
+        function check(id) {
+
+            console.log(id);
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, ckeck it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '@Url.Action("Check", "Report")',
+                        type: 'POST',
+                        data: { id: id },
+                        cache: false,
+                        success: function (data) {
+                            if (data.success) {
+                                Swal.fire(
+                                    'Checked!',
+                                    'Report has been checked.',
+                                    'success'
+                                );
+                            };
+                            setTimeout(function () {
+                                reloadReportsDiv();
+                            }, 2000);
+                        },
+                        error: function (data) {
+                            window.alert('Something went wrong.');
+                        }
+                    });
+                };
+            });
+        };
+
+        function reloadReportsDiv() {
+            var reportsDiv = $("#numberOfReports");
+
+            console.log('radi');
+
+            $.get(window.location.href, function (data) {
+                var updatedContent = $(data).find("#numberOfReports").html();
+                reportsDiv.html(updatedContent);
+                var div = document.getElementById('reports');
+                div.style.display = "block";
+            });
+        }
+    </script>
+}

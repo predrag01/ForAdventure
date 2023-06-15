@@ -1,0 +1,245 @@
+﻿@using System.Globalization;
+@model ShoppingCart
+@using ForAdventure.Service.IService
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IRoomService _roomService
+@inject IRoomTypeService _roomTypeService
+@{
+    ViewData["Title"] = Model.Hotel.Name;
+}
+
+@{
+    Model.Hotel.Rooms = _roomService.GetAllRoomsByHotelId(Model.Hotel.Id).ToList();
+    foreach (Room room in Model.Hotel.Rooms)
+    {
+        room.RoomType = _roomTypeService.GetRoomTypeById(room.RoomTypeId);
+    }
+}
+<div class="containter hotel-page-container">
+    <div class="container-pictures">
+        <div class="first-row-pics">
+            <div class="medium-pictures">
+                @{
+                    var mediumFiles = Model.Hotel.ImageURLs.Skip(1).Take(2);
+                    foreach(var file in mediumFiles)
+                    {
+                        <div class="medium-item">
+                            <img class="hotel-border-radius" src="@file" alt="Hotel Photo">
+                        </div>
+                    }
+
+                }
+            </div>
+            <div class="biggest-picture">
+                <img class="hotel-border-radius" src="@Model.Hotel.ImageURLs.FirstOrDefault()" alt="Hotel Photo">
+            </div>
+        </div>
+        <div class="second-row-pics">
+            <div class="small-pictures">
+                @{
+                    var smallFiles = Model.Hotel.ImageURLs.Skip(3).Take(3);
+                    foreach (var file in smallFiles)
+                    {
+                        <div class="small-item">
+                            <img class="hotel-border-radius" src="@file" alt="Hotel Photo">
+                        </div>
+                    }
+                    if (Model.Hotel.ImageURLs.Count > 6)
+                    {
+                        var leftoverFiles = Model.Hotel.ImageURLs.Skip(6).Take(1);
+                        foreach (var file in leftoverFiles)
+                        {
+                            <div class="darkened-image-container">
+                                @{
+                                    if (Model.Hotel.ImageURLs.Count == 7)
+                                    {
+                                        <img src="@file" alt="Hotel Photo">
+                                    }
+                                    else
+                                    {
+                                        <img class="darkened-image hotel-border-radius" src="@file" alt="Hotel Photo">
+                                        <div>
+                                            @{
+                                                var number = Model.Hotel.ImageURLs.Count - 6;
+                                                <p class="text-over-image">+@number Photos</p>
+                                            }
+                                        </div>
+                                    }
+                                }
+                            
+                            </div>
+                        }
+
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="mb-4">
+        <div>
+            <h1>@Model.Hotel.Name</h1>
+        </div>
+        <div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <span><em>Posted by</em></span>
+                <a asp-area="Admin" asp-controller="ApplicationUser" asp-action="Profile" asp-route-id="@Model.Hotel.OwnerId">@Model.Hotel.Owner.NameInApplication</a>
+            }
+        </div>
+    </div>
+    <div class="mt-4">
+        <h5>Amenities available:</h5>
+        <div class="d-flex flex-row ">
+            @{
+                if (@Model.Hotel.Pool)
+                {
+                    <div class="me-3">
+                        <p>Pool</p>
+                    </div>
+                }
+                @if (@Model.Hotel.Gym)
+                {
+                    <div class="me-3">
+                        <p>Gym</p>
+                    </div>
+                }
+                @if(@Model.Hotel.Spa){
+                    <div class="me-3">
+                        <p>Spa</p> 
+                    </div>
+                }
+                @if (@Model.Hotel.Sauna)
+                {
+                    <div class="me-3">
+                        <p>Sauna</p>
+                    </div>
+                }
+                @if(@Model.Hotel.Restaurant){
+                    <div class="me-3">
+                        <p>Restaurant</p>
+                    </div>
+                }
+                @if (@Model.Hotel.Parking)
+                {
+                    <div class="me-3">
+                        <p>Parking</p>
+                    </div>
+                }
+
+            }
+
+        </div>
+    </div>
+    <div class="row mt-4 mb-3 d-flex flex-column">
+        <h5>Contact:</h5>
+        <div class="col-5">
+            <p><i class="bi bi-telephone-fill"></i>&nbsp;&nbsp;@Model.Hotel.Phone</p>
+
+        </div>
+        <div class="col-7">
+            <p><i class="bi bi-envelope-fill"></i>&nbsp;&nbsp;@Model.Hotel.Email</p>
+
+        </div>
+    </div>
+    <div id="room-carousel" class="carousel slide" style="width:80%">
+        <div class="carousel-inner d-flex ">
+            @{
+                bool isFirst = true;
+                foreach (Room room in Model.Hotel.Rooms)
+                {
+                    <div class="carousel-item @((isFirst) ? "active" : "")">
+                        <div class="d-flex flex-row">
+                            <div style="width:15%"></div>
+                            <div class="" style="width:70%">
+                                <div class="">
+                                    <div class="">
+                                        <p class="text-primary" style="font-size:20px">@room.RoomType.Type </p>
+                                    </div>
+                                    <div class="">
+                                        <div class="">
+                                            @{
+                                                if (@room.NumOfBeds == 1)
+                                                {
+                                                    <p>@room.NumOfBeds bed</p>
+                                                }
+                                                else
+                                                {
+                                                    <p>@room.NumOfBeds beds</p>
+                                                }
+                                            }
+                                        </div>
+                                        <div class="">
+                                            <p>@room.PricePerNight.ToString("C", new CultureInfo("en-MNE")) per night </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <form method="post">
+                                    <div class="room-form">
+                                        <input hidden asp-for="@room.Id" />
+                                        <div class="d-flex flex-column">
+                                            <label class="">Check in:</label>
+                                            <input type="date" asp-for="@Model.DateFromRoom" required />
+                                        </div>
+                                        <div class="d-flex flex-column">
+                                            <label class="">Check out:</label>
+                                            <input type="date" asp-for="@Model.DateToRoom" required />
+                                        </div>
+                                        <div class="room-btn-submit d-flex justify-content-center">
+                                            <input asp-for="@Model.ActivityId" hidden />
+                                            <input asp-for="@Model.Id" hidden>
+                                            <input asp-for="@Model.NumberOfPersons" hidden>
+                                            <input asp-for="@Model.EquipmentId" hidden>
+                                            <input asp-for="@Model.DateFromEquipment" hidden>
+                                            <input asp-for="@Model.DateToEquipment" hidden>
+                                            <input asp-for="@Model.RoomId" hidden>
+                                            <input asp-for="@Model.DateFromRoom" hidden>
+                                            <input asp-for="@Model.DateToRoom" hidden>
+                                            <button type="submit" class="btn btn-primary" style="width:150px">Reserve</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div style="width:15%"></div>
+                        
+                        </div>
+                    </div>
+                    isFirst = false;
+                }
+            }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#room-carousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true">
+                <i class="bi bi-chevron-left text-dark"></i>
+            </span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#room-carousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true">
+                <i class="bi bi-chevron-right text-dark"></i>
+            </span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('.btn-primary').on('click', function (e) {
+                e.preventDefault();
+
+                var checkInDate = new Date($('#DateFromRoom').val());
+                var checkOutDate = new Date($('#DateToRoom').val());
+
+                if (checkOutDate <= checkInDate) {
+                    alert('Check-out date must be after the Check-in date');
+                    return;
+                }
+
+                $(this).closest('form').submit();
+            });
+        });
+    </script>
+}

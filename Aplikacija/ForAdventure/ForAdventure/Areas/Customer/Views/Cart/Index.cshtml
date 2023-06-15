@@ -1,0 +1,215 @@
+﻿@using System.Globalization;
+@model ForAdventure.Models.ViewModels.ShoppingCartVM
+@using Microsoft.Extensions.Options
+@inject IOptions<ForAdventure.Service.Utility.StripeSettings> Stripe
+@inject ForAdventure.Service.IService.IShoppingCartService service
+
+<form id="myForm" method="post" asp-action="Pay" style="margin:5%">
+	<div class="card">
+		<div class="card-header bg-dark text-light">
+			<div class="text-light pt-md-2">
+				<p style="font-size: 26px;">Shopping cart</p>
+			</div>
+		</div>
+		<div class="card-body">
+			<div class="row">
+				<div id="cart">
+					@foreach(var obj in Model.CartList)
+					{
+						@if(obj.Activity!=null)
+						{
+							<div class="row">
+								<div style="width:20%; height:120px;">
+									@if (obj.Activity.ImageURL == null)
+									{
+										<img style="width:100%; height:100%;" src="~/default-images/no-image.jpg" />
+									}
+									else
+									{
+										<img style="width:100%; height:100%;" src="@obj.Activity.ImageURL" />
+									}
+								</div>
+								<div class="pt-2" style="width:45%">
+									<p class="h4 mb-0">@obj.Activity.Name</p>
+									<p class="mb-2">by @obj.Activity.User.NameInApplication</p>
+									<p class="mb-0"><i class="bi bi-calendar3"></i>&nbsp; Start:@obj.Activity.DateFrom</p>
+									<p><i class="bi bi-calendar3"></i>&nbsp; End:@obj.Activity.DateTo</p>
+								</div>
+								<div class="col d-flex align-items-center justify-content-center">
+									<p class="pt-md-3"><i class="bi bi-person-fill"></i>&nbsp; @obj.NumberOfPersons x @obj.Activity.Price.ToString("C", new CultureInfo("en-MNE"))</p>
+								</div>
+								<div class="col d-flex justify-content-center align-items-center">
+									<input asp-for="@obj.Id" hidden>
+									<a href="@Url.Action("ActivityPage", "Activity", new { ActivityId = obj.ActivityId })" class="ms-md-3 btn btn-primary">Edit</a>
+								</div>
+								<div class="d-flex justify-content-end" style="width:8%;">
+									<a class="btn h4" onclick="Delete('@obj.Id', '@obj.ActivityId')"><i class="bi bi-x-lg"></i></a>
+								</div>
+							</div>
+							<hr />
+						}
+					}
+					<br />
+					@foreach (var obj in Model.CartList)
+					{
+						@if (obj.Equipment != null)
+						{
+
+							<div class="row">
+								<div style="width:20%; height:120px;">
+									@if (obj.Equipment.ImageURLs.FirstOrDefault() == null)
+									{
+										<img style="width:100%; height:100%;" src="~/default-images/no-image.jpg" />
+									}
+									else
+									{
+										<img style="width:100%; height:100%;" src="@obj.Equipment.ImageURLs.FirstOrDefault()" />
+									}
+								</div>
+								<div class="pt-2" style="width:45%">
+									<p class="h4 mb-0">@obj.Equipment.Naziv</p>
+									<p class="mb-1">by @obj.Equipment.Owner.NameInApplication</p>
+									<p class="mb-0"><i class="bi bi-calendar3"></i>&nbsp; Start:@obj.DateFromEquipment</p>
+									<p><i class="bi bi-calendar3"></i>&nbsp; End:@obj.DateToEquipment</p>
+								</div>
+								<div class="col d-flex align-items-center justify-content-center">
+									<p class="pt-md-3"><i class="bi bi-gear-fill"></i>&nbsp; @obj.DaysEquipment x @obj.Equipment.Cena.ToString("C", new CultureInfo("en-MNE"))</p>
+								</div>
+								<div class="col d-flex justify-content-center align-items-center">
+									<input asp-for="@obj.Id" hidden>
+									<a asp-area="Customer" asp-controller="Equipment" asp-action="EquipmentPage" asp-route-EquipmentId="@obj.EquipmentId" class="ms-md-3 btn btn-primary">Edit</a>
+								</div>
+								<div class="d-flex justify-content-end" style="width:8%;">
+									<a class="btn h4" onclick="Delete('@obj.Id', '@obj.EquipmentId')"><i class="bi bi-x-lg"></i></a>
+								</div>
+							</div>
+							<hr />
+						}
+					}
+					<br />
+					@foreach (var obj in Model.CartList)
+					{
+						
+						@if (obj.Room != null)
+						{
+							<div class="row">
+								<div class="col-11 col-md-10">
+									<div class="row">
+										<div class="col-12 col-md-3">
+											<img style="width:100%;height:auto;border-radius:5%;" src="@obj.Room.Hotel.ImageURLs.FirstOrDefault()" />
+										</div>
+										<div class="pt-1 col-12 col-md-5">
+											<p class="h4 mb-0">@obj.Room.Hotel.Name</p>
+											<p class="mb-1">by @obj.Room.Hotel.Owner.NameInApplication</p>
+											<p class="mt-0 mb-0">Type of room: @obj.Room.RoomType</p>
+											<p class="mb-0"><i class="bi bi-calendar3"></i>&nbsp; Start:@obj.DateFromRoom.Value</p>
+											<p><i class="bi bi-calendar3"></i>&nbsp; End:@obj.DateToRoom</p>
+										</div>
+										<div class="col-12 col-md-2 d-flex align-items-center justify-content-center">
+											<p class="pt-md-3"><i class="bi bi-moon-fill"></i>&nbsp; @obj.DaysHotel x @obj.Room.PricePerNight.ToString("C", new CultureInfo("en-MNE"))</p>
+										</div>
+										<div class="col-12 col-md-2 d-flex justify-content-center align-items-center">
+											<input asp-for="@obj.Id" hidden>
+											<a asp-area="Customer" asp-controller="Hotel" asp-action="HotelPage" asp-route-HotelId="@obj.Room.HotelId" class="ms-md-3 btn btn-primary">Edit</a>
+										</div>
+									</div>
+								</div>
+								<div class="col-1 col-md-2">
+									<div class="d-flex justify-content-end ms-4">
+										<a class="btn h4" onclick="Delete('@obj.Id', '@obj.RoomId')"><i class="bi bi-x-lg"></i></a>
+									</div>
+								</div>
+							</div>
+							
+							<hr />
+						}
+					}
+				</div>
+			</div>
+			<div id="price" class=" row d-flex justify-content-end pe-2">
+				<div class="border border-2 d-flex justify-content-between align-items-center" style="width:35%;min-width:280px;">
+					<p class="text-info h5 ms-3 mt-3 mb-3">Total:</p>
+					<p class="text-info h5 me-3 mt-3 mb-3">@Model.CartTotal.ToString("C", new CultureInfo("en-MNE"))</p>
+				</div>
+			</div>
+		</div>
+		<div class="card-footer">
+			<div class="row d-flex justify-content-end pe-2">
+				<input asp-for="@Model.CartTotal" hidden>
+				@if(Model.CartList.ToList().Count>0)
+				{
+					<button type="submit" class="w-25 btn btn-success">Pay</button>
+				}
+				else
+				{
+					<button type="submit" class="w-25 btn btn-success disabled">Pay</button>
+				}
+
+			</div>
+		</div>
+	</div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function Delete(cartId, activityId) {
+			console.log(cartId);
+			console.log(activityId);
+			$.ajax({
+				url: '@Url.Action("Delete", "Cart")',
+				type: 'DELETE',
+				data:{cartId: cartId, activityId: activityId},
+				cache: false,
+				success: function (data) {
+					setTimeout(function () {
+						reloadCartDiv();
+					}, 1500);
+				},
+				error: function (data) {
+					setTimeout(function () {
+						reloadCartDiv();
+					}, 1000);
+				}
+			});
+        };
+
+		$('#myForm').submit(function () {
+			$.ajax({
+				url: '@Url.Action("CheckAvailability", "Cart")',
+				type: 'GET',
+				cache: false,
+				success: function (data) {
+					if(!data.success)
+					{
+						Swal.fire({
+							icon: 'error',
+							title: 'Oops...',
+							text: data.message,
+						})
+					}
+					else
+					{
+						$('#myForm').unbind('submit').submit();
+					}
+				},
+			});
+			return false;
+		});
+
+		function reloadCartDiv() {
+			var cartDiv = $("#cart");
+			var priceDiv=$("#price");
+
+			console.log('radi');
+
+			$.get(window.location.href, function (data) {
+				var updatedContent = $(data).find("#cart").html();
+				cartDiv.html(updatedContent);
+
+				var updatedContent1 = $(data).find("#price").html();
+				priceDiv.html(updatedContent1);
+			});
+		}
+    </script>
+}

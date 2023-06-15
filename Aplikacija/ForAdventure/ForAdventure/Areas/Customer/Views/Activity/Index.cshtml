@@ -1,0 +1,185 @@
+﻿@model ActivitiesViewModel
+@using Microsoft.AspNetCore.Identity
+@using ForAdventure.Service.IService
+@using ForAdventureWeb.Areas.Customer.ViewModels
+@using ForAdventure.Models.ViewModels;
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IApplicationUserService appuserservice;
+@inject IActivityService service
+@{
+    ViewData["Title"] = "Index";
+    int count = (service.Activity.GetAll().Count()) / 5 + 1;
+}
+
+
+
+<div class="container p-3">
+    <div class="d-flex flex-row justify-content-end">
+        <div class="">
+            <a asp-controller="Activity" asp-action="Create" asp-route-UserId="@appuserservice.GetIdByEmail(UserManager.GetUserName(User))" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> List new Activity
+            </a>
+        </div>
+    </div>
+    <br />
+    <div class="row d-flex justify-content-center" style="outline: none;">
+
+        <div class="col-lg-2 col-md-4">
+            
+                @foreach (var obj in Model.ActivityTypes)
+                {
+                    <li class="list-group-item mb-2" style="flex: 1 0 auto">
+                        <div class="btn-group w-100">
+                            <div class="activityType btn btn-outline-primary @(obj.Id == Model.SelectedActivityTypeId ? "active" : "")" data-type="@obj.Id" style="width: 100%; word-break: break-word; ">
+                                @obj.Type
+                            </div>
+                        </div>
+                    </li>
+                }
+
+                <li class="list-group-item" style="flex: 1 0 auto">
+                    <div class="activityType btn btn-outline-primary" data-type="0" style="width: 100%; word-break: break-word;">
+                        Turn off filter
+                    </div>
+                </li>
+            
+
+            <div class="sortingDropdown mt-2">
+                <button id="locationFilter" class="btn btn-primary filterToggle mb-2 w-100">
+                    Filter by Location
+                </button>
+                <div id="locationInputContainer" style="display: none;">
+                    <input type="text" id="locationInput" class="form-control form-control-sm" placeholder="Enter location" />
+                </div>
+            </div>
+          
+
+
+            <div class="sortingDropdown mt-2">
+                <select id="sortingSelect" class="form-select form-select-sm">
+                    <option value="name">Sort by Name</option>
+                    <option value="price low">Sort by Price (Ascending)</option>
+                    <option value="price high">Sort by Price (Descending)</option>
+                    <option value="old">Oldest to Newest</option>
+                    <option value="new">Newest to Oldest</option>
+                    <option value="location">Sort by Location</option>
+                </select>
+            </div>
+            <br />
+            
+        </div>
+
+
+        <div class="col-lg-10 col-md-8">
+            <div id="filteredActivityContainer">
+                @await Html.PartialAsync("_ActivityList")
+            </div>
+            <div class="d-flex justify-content-center">
+                <nav aria-label="...">
+                    <ul class="pagination">
+
+                        <li class="page-item" id="prev">
+                            <a class="page-link" href="#">Previous</a>
+                        </li>
+                        @for (int i = 1; i <= count; i++)
+                        {
+                            <li class="page-item" id="@i">
+                                <a class="page-link" href="#">@i</a>
+
+                            </li>
+                        }
+                        <li class="page-item" id="next">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+    {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+
+
+        
+        $(document).ready(function () {
+            var page=1;
+            var dropdown = $('.sortingDropdown');
+            var isDropdownVisible = true;
+            var activityTypeId=0;
+            var activityTypes = $('.activityType');
+
+            $('.activityType').on('click', function () {
+                activityTypeId = $(this).data('type');
+                console.log(activityTypeId);
+                activityTypes.removeClass('active');
+                $(this).addClass('active');
+
+                if (!isDropdownVisible) {
+                    dropdown.slideDown();
+                    isDropdownVisible = true;
+                }
+
+                filterActivities(activityTypeId, page);
+            });
+
+            $('#sortingSelect').on('change', function () {
+                filterActivities(activityTypeId, page);
+            });
+
+            $('#locationFilter').on('click', function () {
+                $('#locationInputContainer').toggle();
+            });
+
+            $('#locationInput').on('input', function () {
+                filterActivities(activityTypeId, page);
+            });
+
+            function filterActivities(activityTypeId, page) {
+                var sortOption = $('#sortingSelect').val();
+                var location = $('#locationInput').val();
+
+                $.ajax({
+                    url: '@Url.Action("Filter", "Activity")',
+                    type: 'GET',
+                    data: {
+                        activityTypeId: activityTypeId,
+                        sortOption: sortOption,
+                        location: location, 
+                        page: page,
+                    },
+                    success: function (response) {
+                        $('#filteredActivityContainer').html(response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            }
+            $(".page-item").click(function (e) {
+                if ($(this).attr("id") == 'next') {
+                    if (page < @count) {
+                        page++;
+                    }
+                }
+                else if ($(this).attr("id") == 'prev') {
+                    if (page > 1) {
+                        page--;
+
+                    }
+
+                }
+                else
+                    page = $(this).attr("id");
+                filterActivities(activityTypeId, page);
+            });
+        });
+    </script>
+
+
+}

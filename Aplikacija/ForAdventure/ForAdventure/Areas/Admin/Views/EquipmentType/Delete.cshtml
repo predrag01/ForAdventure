@@ -1,0 +1,17 @@
+﻿@model EquipmentType
+<form method="post" asp-action="DeletePOST">
+    <input asp-for="Id" hidden />
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary">List your Equipment</h2>
+            <hr />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Naziv"></label>
+            <input asp-for="Naziv" class="form-control" disabled />
+            <span asp-validation-for="Naziv" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-danger" style="width:150px">Delete</button>
+        <a asp-controller="EquipmentType" asp-action="Index" class="btn btn-secondary" style="width:150px">View all Equipment types</a>
+    </div>
+</form>

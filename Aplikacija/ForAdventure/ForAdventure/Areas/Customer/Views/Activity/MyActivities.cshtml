@@ -1,0 +1,110 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ForAdventure.Service.IService
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IApplicationUserService appuserservice;
+
+@model IEnumerable<Activity>
+@inject IActivityService service
+@{
+    ViewData["Title"] = "My Activites";
+}
+
+
+<div class="container p-3 row">
+    <div class="row p-4">
+        <div class="col-6">
+            <h2 class="text-primary">Your activities</h2>
+        </div>
+        <div class="col-6 d-flex justify-content-md-end">
+            <a asp-controller="Activity" asp-action="Create" asp-route-UserId="@appuserservice.GetIdByEmail(UserManager.GetUserName(User))" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> List your Activity
+            </a>
+        </div>
+    </div>
+    <br />
+    
+    <div>
+
+    </div>
+            @foreach (var obj in Model)
+            {
+                <div class="row p-3 mb-3" style="background-color:#f8f9fa">
+                        <div class="col-12 col-md-3">
+                            <img src="@obj.ImageURL" alt="Activity Image" class="img-fluid" style="width:300px;height:auto;border-radius:5%;" />
+                        </div>
+                        <div class="col-12 col-md-9 d-flex flex-column">
+                            <div class="d-flex flex-row flex-wrap">
+                                <div>
+                                    <a asp-controller="Activity" asp-action="ActivityPage" asp-route-ActivityId="@obj.Id" style="text-decoration:none">
+                                        <p style="font-size:30px" class="text-primary">@obj.Name </p>
+                                    </a>
+                                </div>
+                                <div>
+                                    <div class="d-flex flex-row ms-3">
+                                        <a asp-controller="Activity" asp-action="Edit" asp-route-id="@obj.Id" class="btn">
+                                            <i class="bi bi-pencil-square" style="font-size:20px;color:black;"></i>
+                                        </a>
+                                <a class="btn" onclick="deleteActivity('/Customer/Activity/Delete/@obj.Id')">
+                                            <i class="bi bi-trash" style="font-size:20px;color:black;"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-primary"><i class="bi bi-geo-alt-fill"></i> @obj.Address, @obj.Location</p>
+                                    <div>
+                                        <div><i class="bi bi-calendar3"></i>From: @obj.DateFrom.ToShortDateString() </div>
+                                        <div><i class="bi bi-calendar3"></i> To: @obj.DateTo.ToShortDateString()</div>
+                                    </div>
+                            </div>
+                        </div>
+                        @*<a asp-controller="Activity" asp-action="ActivityPage" asp-route-ActivityId="@obj.Id" style="text-decoration:none">
+                                <div class="row">
+                                    
+                                    <div class="col-12 col-md-8">
+                                        <p  style="font-size:xx-large">@obj.Name </p>
+                                        <p class="text-primary"><i class="bi bi-geo-alt-fill"></i> @obj.Address, @obj.Location</p>
+                                        <p class="text-primary"><i class="bi bi-calendar3"></i> From: @obj.DateFrom.ToShortDateString() <i class="bi bi-calendar3"></i> To: @obj.DateTo.ToShortDateString()</p>
+                                    </div>
+                                </div>
+                        </a>*@
+                </div>
+            }
+</div>
+
+@section Scripts {
+    <script>
+        function deleteActivity(url) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        success: function (data) {
+                            if (data.success) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.href = data.redirectUrl;
+                               
+                                });
+                            }
+                        }
+                    })
+                }
+            })
+        };
+    </script>
+}

@@ -1,0 +1,26 @@
+﻿@model ActivityType
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <form method="post">
+            <div class="border p-3 mt-4">
+                <div class="mb-3">
+                    <label asp-for="Type"></label>
+                    <input asp-for="Type" class="form-control" />
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:150px">Create</button>
+                <a asp-controller="ActivityType" asp-action="Index" class="btn btn-secondary" style="width:200px">View all activity types</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+
+

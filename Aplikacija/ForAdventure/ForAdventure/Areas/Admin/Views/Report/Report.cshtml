@@ -1,0 +1,61 @@
+﻿@model Report
+@using ForAdventure.Service.IService;
+@inject IApplicationUserService service;
+@{
+	ApplicationUser reported = service.GetUserById(Model.ReportedId);
+}
+<br />
+<form method="post" asp-action="Report" >
+	<div class="row">
+
+		<div style="width:10%">
+		</div>
+		<div style="width:80%">
+			<h1>Report user</h1>
+			<hr />
+			<div class="row">
+				<div class="col-md-3">
+					<div class="d-md-flex justify-content-md-center mb-md-2">
+						<input asp-for="ReportedId" hidden/>
+						<input asp-for="ReporterId" hidden/>
+						@if (reported.ImageURL == null)
+						{
+							<img src="~/images/profilePicture/withoutImage.jpg" class="img-fluid rounded-circle border border-dark border-3"
+									style="width: 120px; height:120px" />
+						}
+						else
+						{
+							<img src="@reported.ImageURL" class="img-fluid rounded-circle border border-dark border-3"
+								 style="width: 120px; height:120px" />
+						}
+					</div>
+				</div>
+				<div class="col-md-5 pt-md-2">
+					<p class="h3 pt-1"><i class="bi bi-at"></i>@reported.NameInApplication</p>
+					<p class="mb-1">@reported.Name @reported.LastName</p>
+				</div>
+			</div>
+			<div>
+				<div class="mb-3 mt-md-3">
+					<label asp-for="Text" class="mb-md-2"></label>
+					<textarea asp-for="Text" class="form-control" rows="4"></textarea>
+					<span asp-validation-for="Text" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="row justify-content-end">
+				<div class="d-flex justify-content-end">
+					<button type="submit" class="btn btn-primary me-md-2" style="width:150px">Submit</button>
+					<a asp-controller="ApplicationUser" asp-action="Profile" asp-route-id="@reported.Id" class="btn btn-danger ms-md-2" style="width:150px">Cancel</a>
+				</div>
+			</div>
+			
+		</div>
+		<div style="width:10%">
+		</div>
+	</div>
+</form>
+
+@section Scripts
+	{
+	<partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,232 @@
+﻿@model IEnumerable<Hotel>
+@using ForAdventure.Service.IService
+@inject IRoomService service
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IApplicationUserService appuserservice;
+@inject IHotelService hotelService;
+@{
+    ViewData["Title"] = "Index";
+    int count = (hotelService.Hotel.GetAll().Count())/5+1;
+}
+<div class="container p-3">
+    <div class="d-flex flex-row justify-content-end">
+        <div class="">
+            <a asp-controller="Hotel" asp-action="Create" asp-route-OwnerId="@appuserservice.GetIdByEmail(UserManager.GetUserName(User))" class="btn btn-primary">
+                <i class="bi bi-building-fill-add"></i> &nbsp; List new Hotel
+            </a>
+        </div>
+    </div>
+    <br />
+    <div class="hotel-wrapper">
+        <div class="hotel-amenities mb-3 me-3 d-flex flex-column">
+            <select class="fetch-hotels mb-3 form-select form-select-sm" style="width:100%">
+                <option value="Price:High to Low">Price: High to Low</option>
+                <option value="Price: Low to High">Price: Low to High</option>
+                <option value="Newest">Newest</option>
+                <option value="Oldest">Oldest</option>
+            </select>
+            <div>
+                <button class="amenities-label btn btn-outline-dark"><i class="bi bi-funnel"></i>Filter by Amenities</button>
+            </div>
+            <div class="amenities-hide mt-3" style="display: none">
+                <div class="form-check form-switch ms-3">
+                    <input class="form-check-input" type="checkbox" id="pool-check">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Pool</label>
+                </div>
+                <div class="form-check form-switch ms-3">
+                    <input class="form-check-input" type="checkbox" id="gym-check">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Gym</label>
+                </div>
+                <div class="form-check form-switch ms-3">
+                    <input class="form-check-input" type="checkbox" id="spa-check">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Spa</label>
+                </div>
+                <div class="form-check form-switch ms-3">
+                    <input class="form-check-input" type="checkbox" id="sauna-check">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Sauna</label>
+                </div>
+                <div class="form-check form-switch ms-3">
+                    <input class="form-check-input" type="checkbox" id="restaurant-check">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Restaurant</label>
+                </div>
+                <div class="form-check form-switch ms-3">
+                <input class="form-check-input" type="checkbox" id="parking-check">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Parking</label>
+            </div>
+            </div>
+        </div>
+        <div class="hotels" style="width:100%">
+            
+            <div id="hotels-list-container">
+                @await Html.PartialAsync("_HotelList")
+            </div>
+            <div class="d-flex justify-content-center">
+                <nav aria-label="...">
+                    <ul class="pagination">
+                        
+                        <li class="page-item" id="prev">
+                            <a class="page-link" href="#">Previous</a>
+                        </li>
+                        @for (int i = 1; i <= count; i++)
+                        {
+                            <li class="page-item" id="@i">
+                                <a class="page-link" href="#">@i</a>
+                                
+                            </li>
+                        }
+                        <li class="page-item" id="next">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    
+
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            var sortingOption;
+
+            var amenitiesToggle = false;
+
+            var sortingOption;
+            var poolSwitchState = false;
+            var gymSwitchState=false;
+            var spaSwitchState = false;
+            var saunaSwitchState = false;
+            var restaurantSwitchState = false;
+            var parkingSwitchState = false;
+
+            var page = 1;
+            
+
+            refreshHotelsList(sortingOption, poolSwitchState, gymSwitchState, spaSwitchState, saunaSwitchState, restaurantSwitchState, parkingSwitchState, page);
+
+            var dropdown = $('.sortingDropdown');
+
+            $('.amenities-label').click(function() {
+                if(amenitiesToggle){
+                    $('.amenities-hide').slideUp("fast", "linear");
+                    amenitiesToggle = false;
+                }
+                else{
+                    $('.amenities-hide').slideDown("fast", "linear");
+                    amenitiesToggle = true;
+                }
+            });
+
+            $("#pool-check").click(function () {
+                if (poolSwitchState==false)
+                    poolSwitchState=true;
+                else
+                    poolSwitchState=false;
+                console.log("Pool Switch State: " + poolSwitchState);
+                refreshHotelsList(sortingOption, poolSwitchState, gymSwitchState, spaSwitchState, saunaSwitchState, restaurantSwitchState, parkingSwitchState, page);
+            });
+
+            $("#gym-check").click(function () {
+                if (gymSwitchState == false)
+                    gymSwitchState = true;
+                else
+                    gymSwitchState = false;
+                console.log("Gym Switch State: " + gymSwitchState);
+                refreshHotelsList(sortingOption, poolSwitchState, gymSwitchState, spaSwitchState, saunaSwitchState, restaurantSwitchState, parkingSwitchState, page);
+            });
+
+            $("#spa-check").click(function () {
+                if (spaSwitchState == false)
+                    spaSwitchState = true;
+                else
+                    spaSwitchState = false;
+                console.log("Spa Switch State: " + spaSwitchState);
+                refreshHotelsList(sortingOption, poolSwitchState, gymSwitchState, spaSwitchState, saunaSwitchState, restaurantSwitchState, parkingSwitchState, page);
+            });
+
+            $("#sauna-check").click(function () {
+                if (saunaSwitchState == false)
+                    saunaSwitchState = true;
+                else
+                    saunaSwitchState = false;
+                console.log("Sauna Switch State: " + saunaSwitchState);
+                refreshHotelsList(sortingOption, poolSwitchState, gymSwitchState, spaSwitchState, saunaSwitchState, restaurantSwitchState, parkingSwitchState, page);
+            });
+
+            $("#restaurant-check").click(function () {
+                if (restaurantSwitchState == false)
+                    restaurantSwitchState = true;
+                else
+                    restaurantSwitchState = false;
+                console.log("Restaurant Switch State: " + restaurantSwitchState);
+                refreshHotelsList(sortingOption, poolSwitchState, gymSwitchState, spaSwitchState, saunaSwitchState, restaurantSwitchState, parkingSwitchState, page);
+            });
+
+            $("#parking-check").click(function () {
+                if (parkingSwitchState == false)
+                    parkingSwitchState = true;
+                else
+                    parkingSwitchState = false;
+                console.log("Parking Switch State: " + parkingSwitchState);
+                refreshHotelsList(sortingOption, poolSwitchState, gymSwitchState, spaSwitchState, saunaSwitchState, restaurantSwitchState, parkingSwitchState, page);
+            });
+
+
+            $('.fetch-hotels').change(function () {
+                console.log($(this).val());
+                sortingOption = $(this).val();
+                refreshHotelsList(sortingOption);
+            });
+
+            $(".page-item").click(function (e) {
+                if ($(this).attr("id")=='next') {
+                    if(page<@count)
+                    {
+                        page++;
+                    }
+                }
+                else if ($(this).attr("id")=='prev')
+                {
+                    if(page>1)
+                    {
+                        page--;
+
+                    }
+
+                }
+                else
+                    page = $(this).attr("id");
+                console.log(page);
+                refreshHotelsList(sortingOption, poolSwitchState, gymSwitchState, spaSwitchState, saunaSwitchState, restaurantSwitchState, parkingSwitchState, page);
+            });
+
+            function refreshHotelsList(sortingOption) {
+                console.log('Refreshing hotels list');
+                $.ajax({
+                    url: '@Url.Action("HotelsList", "Hotel")',
+                    type: 'GET',
+                    data: {
+                        sortingOption: sortingOption,
+                        poolState: poolSwitchState,
+                        gymState: gymSwitchState,
+                        spaState: spaSwitchState,
+                        saunaState: saunaSwitchState,
+                        restaurantState: restaurantSwitchState,
+                        parkingState: parkingSwitchState,
+                        page: page
+                    },
+                    cache:false,
+                    success: function (data) {
+                        $('#hotels-list-container').html(data);
+                    }
+                });
+            }
+        });
+
+
+    </script>
+}

@@ -1,0 +1,149 @@
+﻿@model Activity
+@using ForAdventure.Service.IService;
+@using Microsoft.AspNetCore.Mvc.ModelBinding
+@inject IActivityTypeService _activityTypeService
+<div class="row">
+	<div class="col-1"></div> 
+	<div class="col-10">
+		<form method="post" asp-action="Create" enctype="multipart/form-data">
+			@Html.AntiForgeryToken()
+			<input asp-for="UserId" value="@ViewBag.UserId" class="form-control" hidden />
+			<div class="border p-3 mt-4 row">
+				<div class="row pb-2">
+					<h2 class="text-primary">List your Activity</h2>
+					<hr />
+				</div>
+				<div class="mb-3">
+					<label asp-for="Name"></label>
+					<input asp-for="Name" class="form-control" />
+					<span asp-validation-for="Name" class="text-danger"></span>
+				</div>
+				<div class="mb-3">
+					<label asp-for="ImageURL"></label>
+					<input type="file" name="file" id="uploadBox" class="form-control" />
+				</div>
+				<div class="mb-3">
+					<label asp-for="Description"></label>
+					<textarea asp-for="Description" class="form-control" rows="2"></textarea>
+					<span asp-validation-for="Description" class="text-danger"></span>
+				</div>
+				
+					<div class="mb-3 col-6">
+						<label asp-for="Location"></label>
+						<input asp-for="Location" class="form-control" />
+						<span asp-validation-for="Location" class="text-danger"></span>
+					</div>
+					<div class="mb-3 col-6">
+						<label asp-for="Address"></label>
+						<input asp-for="Address" class="form-control" />
+						<span asp-validation-for="Address" class="text-danger"></span>
+					</div>
+				
+				
+					<div class="mb-3 col-6">
+						<label asp-for="Price"></label>
+						<input asp-for="Price" class="form-control" />
+						<span asp-validation-for="Price" class="text-danger"></span>
+					</div>
+					<div class="mb-3 col-6">
+						<label asp-for="Capacity"></label>
+						<input asp-for="Capacity" class="form-control" />
+						<span asp-validation-for="Capacity" class="text-danger"></span>
+					</div>
+				
+				
+					<div class="mb-3 col-6">
+						<label asp-for="DateFrom"></label>
+						<input asp-for="DateFrom" class="form-control" />
+						<span asp-validation-for="DateFrom" class="text-danger"></span>
+					</div>
+					<div class="mb-3 col-6">
+						<label asp-for="DateTo"></label>
+						<input asp-for="DateTo" class="form-control" />
+						<span asp-validation-for="DateTo" class="text-danger"></span>
+					</div>
+				
+				
+					<div class="mb-3 col-6">
+						<label asp-for="SkillLevel"></label>
+						<select asp-for="SkillLevel" class="form-select">
+							<option disabled selected>--Select skill level type--</option>
+							<option value="Easy">Easy</option>
+							<option value="Moderate">Moderate</option>
+							<option value="Difficult">Difficult</option>
+						</select>
+						<span asp-validation-for="SkillLevel" class="text-danger"></span>
+					</div>
+					<div class="mb-3 col-6">
+						<label asp-for="ActivityTypeId"></label>
+						@{
+							var ActivityTypes = _activityTypeService.ActivityType.GetAll();
+							var ActivityTypesList = new SelectList(ActivityTypes, "Id", "Type");
+						}
+						<select asp-for="ActivityTypeId" asp-items="@ActivityTypesList" class="form-select">
+							<option disabled selected>--Select activity type--</option>
+						</select>
+						<span asp-validation-for="ActivityTypeId" class="text-danger"></span>
+					</div>
+				
+				<div class="row">
+					<div class="mb-3">
+						<button type="submit" class="btn btn-primary" style="width:150px">Create</button>
+						<a asp-controller="Activity" asp-action="MyActivities" asp-route-UserId="@ViewBag.UserId" class="btn btn-secondary" style="width:150px">View your activities</a>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="col-1"></div>
+</div>
+
+
+@section Scripts{
+	<script>
+			$(document).ready(function () {
+				$('#DateTo').on('change', function () {
+					var dateFrom = $('#DateFrom').val();
+					var dateTo = $(this).val();
+
+					if (dateFrom && dateTo) {
+						var dateFromObj = new Date(dateFrom);
+						var dateToObj = new Date(dateTo);
+
+						if (dateToObj < dateFromObj) {
+							alert('DateTo is before DateFrom');
+							$('#DateTo').val('');
+						}
+					}
+				});
+
+			$('#uploadBox').on('change', function (e) {
+				var files = e.target.files;
+
+				for (var i = 0; i < files.length; i++) {
+					var file = files[i];
+					var img = new Image();
+
+					img.onload = function () {
+
+						if (this.width < 640 || this.height < 400) {
+							Swal.fire({
+								icon: 'error',
+								title: 'Oops...',
+								text: 'Image must be at least 640x400px!'
+							})
+							$('#uploadBox').val('');
+						}
+					};
+
+					img.src = URL.createObjectURL(file);
+				}
+			});
+			});
+	</script>
+@{
+		<partial name="_ValidationScriptsPartial" />
+}
+}
+
+

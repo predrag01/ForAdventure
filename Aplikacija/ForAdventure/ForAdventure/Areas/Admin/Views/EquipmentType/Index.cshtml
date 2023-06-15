@@ -1,0 +1,85 @@
+﻿@model IEnumerable<EquipmentType>
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="container p-3">
+    <div class="row p-4">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col-6">
+                    <h2 class="text-primary">Equipment Type List</h2>
+                </div>
+                <div class="col-6 text-end">
+                    <a asp-controller="EquipmentTYpe" asp-action="Create" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> &nbsp; Add new equipment type
+                    </a>
+                </div>
+            </div>
+            <br />
+            <table class="table table-bordered table-striped" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th class="text-center">
+                            Equipment type
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td class="text-center" style="width: 50%">
+                        @obj.Naziv
+                    </td>
+                    <td class="text-center" style="vertical-align: middle;">
+                        <div class="d-flex justify-content-center">
+                            <a onclick="DeleteEquipmentType('/Admin/EquipmentType/Delete/@obj.Id')" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        function DeleteEquipmentType(url) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        success: function (data) {
+                            if (data.success) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                ).then(() => {
+
+                                    window.location.href = data.redirectUrl;
+
+                                });
+                            }
+                        }
+                    })
+                }
+            })
+        };
+    </script>
+}

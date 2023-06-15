@@ -1,0 +1,87 @@
+﻿@model ForAdventure.Models.ViewModels.ProfileVM
+@if(Model.HotelList!=null)
+{
+	<div class="row">
+		<div style="width:5%">
+		</div>
+		<div style="width:90%">
+			@foreach (var obj in Model.HotelList)
+			{
+				<a asp-area="Customer" asp-controller="Hotel" asp-action="HotelPage" asp-route-HotelId="@obj.Id" style="text-decoration:none">
+					<div class="row p-3 mt-md-2 mb-md-2" style="background-color:#f8f9fa">
+						<div class="col-md-4 ">
+							<img class="img-fluid" style="width:300px;height:auto;border-radius:5%;" src="@obj.ImageURLs.FirstOrDefault()">
+						</div>
+						<div class="col-md-7 mt-md-2 ms-4">
+							<h3>@obj.Name</h3>
+						</div>
+					</div>
+				</a>
+			}
+		</div>
+		<div style="width:5%">
+		</div>
+	</div>
+}
+else if (Model.EquipmentList != null)
+{
+	<div class="row">
+		<div style="width:5%">
+		</div>
+		<div style="width:90%">
+			@foreach (var obj in Model.EquipmentList)
+			{
+				<a asp-area="Customer" asp-controller="Equipment" asp-action="EquipmentPage" asp-route-EquipmentId="@obj.ID" style="text-decoration:none">
+					<div class="row p-3 mt-md-2 mb-md-2" style="background-color:#f8f9fa">
+						<div class="col-md-4">
+							<img class="img-fluid" style="width:300px;height:auto;border-radius:5%;" src="@obj.ImageURLs.FirstOrDefault()">
+						</div>
+						<div class="col-md-7 mt-md-2 ms-4">
+							<h3>@obj.Naziv</h3>
+						</div>
+					</div>
+				</a>
+			}
+		</div>
+		<div style="width:5%">
+		</div>
+	</div>
+}
+else if (Model.ActivityList != null)
+{
+	<div class="row">
+		<div style="width:5%">
+		</div>
+		<div style="width:90%">
+			@foreach (var obj in Model.ActivityList)
+			{
+				<a asp-area="Customer" asp-controller="Activity" asp-action="ActivityPage" asp-route-ActivityId="@obj.Id" style="text-decoration:none">
+					<div class="row p-3 mt-md-2 mb-md-2" style="background-color:#f8f9fa">
+						<div class="col-md-4">
+							<img class="img-fluid" style="width:300px;height:auto;border-radius:5%;" src="@obj.ImageURL">
+						</div>
+						<div class="col-md-7 mt-md-2 ms-4">
+							<h3>@obj.Name</h3>
+						</div>
+					</div>
+				</a>
+			}
+		</div>
+		<div style="width:5%">
+		</div>
+	</div>
+}
+else
+{
+	<div class="row">
+		<div style="width:5%">
+		</div>
+		<div style="width:90%">
+			<div class="row pt-md-5 pb-md-5">
+				<h2 class="text-md-center">No post yet</h2>
+			</div>
+		</div>
+		<div style="width:5%">
+		</div>
+	</div>
+}

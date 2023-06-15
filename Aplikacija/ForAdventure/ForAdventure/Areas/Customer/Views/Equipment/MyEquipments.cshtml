@@ -1,0 +1,93 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ForAdventure.Service.IService
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IApplicationUserService appuserservice;
+
+@model IEnumerable<Equipment>
+@inject IEquipmentTypeService service
+
+<div class="container p-3">
+    <div class="row p-4">
+        <div class="col-6">
+            <h2 class="text-primary"> Your equipments </h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Equipment" asp-action="Create" asp-route-OwnerId="@appuserservice.GetIdByEmail(UserManager.GetUserName(User))" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> &nbsp; List your Equipment
+            </a>
+        </div>
+    </div>
+    <br />
+
+    @foreach (var obj in Model)
+    {
+        <div class="row mb-3 p-3" style="background-color:#f8f9fa">
+            <div class="col-3">
+                    <img style="width:300px;height:auto;border-radius:5%;" src="@obj.ImageURLs.FirstOrDefault()" alt="Equipment Photo">
+            </div>
+            <div class="col-9">
+                <div class="d-flex flex-row">
+                    <div>
+                            <a asp-controller="Equipment" asp-action="EquipmentPage" asp-route-EquipmentId="@obj.ID" style="text-decoration:none">
+                                <p style="font-size:30px" class="text-primary">@obj.Naziv</p>
+                            </a>
+                    </div>
+                        <div class="d-flex flex-row ms-3">
+                            <a asp-controller="Equipment" asp-action="Edit" asp-route-id="@obj.ID" class="btn">
+                                <i class="bi bi-pencil-square" style="font-size:20px;color:black;"></i>
+                            </a>
+                            <a class="btn" onclick="Delete('/Customer/Equipment/Delete/@obj.ID')">
+                                <i class="bi bi-trash" style="font-size:20px;color:black;"></i>
+                            </a>
+                        </div>
+                </div>
+                <p class="text-primary"><i class="bi bi-geo-alt-fill"></i> @obj.Adresa, @obj.Lokacija</p>
+                <div style="text-overflow: ellipsis; overflow:hidden; width: 100%; white-space:nowrap;">
+                    <p class="text-primary"><i class="bi bi-info-circle-fill"></i> @obj.Opis</p>
+
+                </div>
+                <p class="text-primary">Price: @obj.Cena</p>
+                <p class="text-primary">Type of equipment: @service.GetEquipmentTypeById(obj.EqTypeId).Naziv</p>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function Delete(url) {
+            console.log('pritisnuto');
+            console.log(url);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        success: function (data) {
+                            if (data.success) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.href = data.redirectUrl;
+                                });
+                            }
+                        }
+                    })
+                }
+            })
+        };
+    </script>
+}

@@ -1,0 +1,32 @@
+﻿@model Room
+
+<form>
+	<div class="border p-3 mt-4">
+		<div class="row pb-2">
+			<h2 class="text-primary">List your Hotel</h2>
+			<hr />
+		</div>
+		<div class="mb-3">
+			<label asp-for="NumOfBeds"></label>
+			<input asp-for="NumOfBeds" class="form-control" />
+			<span asp-validation-for="NumOfBeds" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label asp-for="PricePerNight"></label>
+			<input asp-for="PricePerNight" class="form-control" />
+			<span asp-validation-for="PricePerNight" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label asp-for="HotelId"></label>
+			<input asp-for="HotelId" class="form-control" />
+			<span asp-validation-for="HotelId" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label asp-for="RoomTypeId"></label>
+			<input asp-for="RoomTypeId" class="form-control" />
+			<span asp-validation-for="RoomTypeId" class="text-danger"></span>
+		</div>
+		<button type="submit" class="btn btn-primary" style="width:150px">Update</button>
+		<a asp-controller="Room" asp-action="Index" class="btn btn-secondary" style="width:150px">View listed rooms</a>
+	</div>
+</form>

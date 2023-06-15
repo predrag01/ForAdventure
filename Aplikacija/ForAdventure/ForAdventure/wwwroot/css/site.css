@@ -1,0 +1,374 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+
+    margin-bottom: 60px;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+html {
+    scrollbar-width: none;
+}
+
+
+.checkbox-container {
+    display:flex;
+    flex-direction:row;
+}
+.hotel-info {
+    display: flex;
+    flex-direction: column;
+}
+.hotels {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+#hotels-list-container{
+    width:100%;
+    align-self:center;
+}
+.fetch-hotels{
+    width:85%;
+    align-self:center;
+}
+.hotel-item {
+    display: flex;
+    flex-direction:column;
+}
+/*.hotel-image{
+    width:640px;
+    height:auto;
+}*/
+.hotel-border-radius {
+    border-radius: 5%;
+}
+.container-pictures {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+.first-row-pics {
+    display: flex;
+    flex-wrap:wrap;
+    flex-direction: row;
+    gap: 10px;
+    width:910px;
+}
+.biggest-picture {
+    height: 410px;
+    width:600px;
+}
+.biggest-picture > img {
+    height: 100%;
+    width: 100%;
+}
+.medium-item{
+    align-self:center;
+    width:300px;
+    height:200px;
+}
+.medium-item > img{
+    height:100%;
+    width:100%;
+}
+.medium-pictures {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+.small-pictures {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+.small-item {
+    width: 145px;
+    height: 100px;
+}
+.small-item > img {
+    width: 100%;
+    height: 100%;
+}
+.darkened-image-container {
+    position: relative;
+    text-align: center;
+    width: 145px;
+    height: 100px;
+}
+.darkened-image-container > img {
+    width: 100%;
+    height: 100%;
+}
+.darkened-image {
+    filter: brightness(50%);
+}
+.text-over-image {
+    position: absolute;
+    top: 35%;
+    left: 25%;
+    color:lightgray;
+}
+.rooms-container {
+    width: 70%;
+    flex-direction: column;
+}
+.room-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.room-form {
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+}
+.room-type {
+    font-weight:900;
+    font-size:18px;
+    align-self:center;
+}
+.room-stats {
+    display: flex;
+    flex-direction: column;
+}
+.room-beds-price {
+    display: flex;
+    flex-direction: row;
+    justify-content:space-evenly;
+}
+.hotel-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items:flex-start;
+    justify-content:center;
+}
+
+.amenities-label, .form-check-label {
+    color: #24262b;
+}
+.amenities-hide {
+    display: flex;
+    flex-direction:column;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+.hotel-amenities {
+    align-items: center;
+}
+.hotel-name-addroom-edit{
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-start;
+    align-items:baseline;
+}
+@media screen and (max-width: 1000px) {
+    .first-row-pics {
+        flex-direction: column;
+        width: 610px;
+    }
+    .medium-pictures {
+        flex-direction: row;
+    }
+    .biggest-picture {
+        width: 600px;
+    }
+    .rooms-container {
+        width: 90%;
+        flex-direction: column;
+    }
+
+    .room-item {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .room-stats {
+        flex-direction: column;
+    }
+
+    .room-form {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .room-beds-price {
+        width:75%;
+        align-self:center;
+        justify-content: space-evenly;
+    }
+
+    .room-date-checkin, .room-date-checkout, .room-btn-submit {
+        align-self: center;
+    }
+
+    .room-type {
+        align-self: center;
+    }
+    .hotel-wrapper {
+        flex-direction: column;
+    }
+    .hotel-amenities > button {
+        width: 100%;
+        align-self: center;
+    }
+    .form-switch {
+        flex-basis: 33%;
+    }
+    .fetch-hotels {
+        width: 100%;
+        align-self: center;
+    }
+    .hotel-wrapper {
+        flex-direction: column;
+    }
+
+    .hotel-amenities > button {
+        width: 100%;
+        align-self: center;
+    }
+
+    .amenities-hide {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+    }
+
+    .form-switch {
+        flex-basis: 33%;
+    }
+
+    .hotel-image {
+        width: 100%;
+        height: auto;
+    }
+
+    .row-address-rooms {
+        flex-direction: row;
+    }
+    .hotel-item{
+        width:100%;
+    }
+    .hotel-info {
+        width: 100%;
+    }
+}
+@media screen and (max-width: 750px) {
+
+    .biggest-picture {
+        width: 100%;
+        max-width: 100%;
+        height:auto;
+    }
+    .biggest-picture {
+    }
+    .fetch-hotels {
+        width: 100%;
+        align-self:center;
+    }
+    .medium-pictures {
+        flex-direction: row;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+    .medium-item {
+        width: 50%;
+        max-width: 100%;
+        height: auto;
+    }
+    .small-pictures {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+    .small-item {
+        width: 25%;
+        max-width: 100%;
+        height: auto;
+    }
+    .first-row-pics, second-row-pics {
+        width: 100%;
+    }
+    .container-pictures {
+        width:87%;
+    }
+    .rooms-container {
+        width: 90%;
+        flex-direction:column;
+    }
+    .room-item {
+        flex-direction: column;
+        gap:5px;
+    }
+    .room-stats {
+        flex-direction: column;
+    }
+    .room-form {
+        flex-direction: column;
+        gap: 5px;
+    }
+    .room-beds-price{
+        justify-content:space-evenly;
+    }
+    .room-date-checkin, .room-date-checkout, .room-btn-submit{
+        align-self:center;
+    }
+    .room-type {
+        align-self: center;
+    }
+    .hotel-item {
+        flex-direction: column;
+    }
+    .hotel-wrapper {
+        flex-direction: column;
+    }
+    .hotel-amenities > button {
+        width: 100%;
+        align-self: center;
+    }
+    .amenities-hide {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+    }
+    .form-switch{
+        flex-basis:33%;
+    }
+    .hotel-image{
+        width:100%;
+        height:auto;
+    }
+    .row-address-rooms{
+        flex-direction:row;
+
+    }
+    .hotel-info {
+        width:100%;
+    }
+}
+
+
+

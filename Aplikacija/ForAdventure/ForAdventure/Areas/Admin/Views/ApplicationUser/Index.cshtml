@@ -1,0 +1,173 @@
+﻿@model IEnumerable<ApplicationUser>
+@using ForAdventure.Service.IService
+@inject IApplicationUserService appuserservice;
+@{
+    int count = (appuserservice.ApplicationUser.GetAll().Count()) / 5 + 1;
+}
+<div class="container p-3" enctype="multipart/form-data">
+    <div class=" d-md-flex pt-4 pb-4 justify-content-between">
+        <div class="ms-4">
+            <h2 class="text-primary">Users List</h2>
+        </div>
+        <div class="justify-content-end">
+            <ul class="list-group list-group-horizontal-sm">
+                <a id="allUsers" href="#" class=" p-1" style="background-color:lightgray; border:2px solid black; font-weight: bold; text-decoration:none;" onclick="setActiveFilter('allUsers')">
+                    All users
+                </a>
+                <a id="reported" href="#" class="p-1" style="text-decoration:none;">
+                    Reported
+                </a>
+                <a id="checked" href="#" class="p-1" style="text-decoration:none;">
+                    Checked
+                </a>
+                <a id="unchecked" href="#" class="p-1" style="text-decoration:none;">
+                    Unchecked
+                </a>
+            </ul>
+        </div>
+    </div>
+    <div class="d-md-flex pt-4 pb-1 justify-content-end h-50">
+        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-md btn-primary">
+            <i class="bi bi-plus-lg"></i> &nbsp;Create User
+        </a>
+        <br />
+    </div>
+    <hr />
+    <div id="usersList">
+        @await Html.PartialAsync("_UsersList")
+    </div>
+    <div class="d-flex justify-content-center">
+        <nav aria-label="...">
+            <ul class="pagination">
+
+                <li class="page-item" id="prev">
+                    <a class="page-link" href="#">Previous</a>
+                </li>
+                @for (int i = 1; i <= count; i++)
+                {
+                    <li class="page-item" id="@i">
+                        <a class="page-link" href="#">@i</a>
+
+                    </li>
+                }
+                <li class="page-item" id="next">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script>
+        $(document).ready(function () {
+            var page = 1;
+
+            var filter = 'allUsers';
+
+            var allUsers = document.getElementById('allUsers');
+            var reported = document.getElementById('reported');
+            var checked = document.getElementById('checked');
+            var unchecked = document.getElementById('unchecked');
+
+
+            function setActiveFilter(filter, page) {
+                allUsers.style.border = '';
+                allUsers.style.backgroundColor = ''
+                reported.style.border = '';
+                reported.style.backgroundColor = ''
+                checked.style.border = '';
+                checked.style.backgroundColor = ''
+                unchecked.style.border = '';
+                unchecked.style.backgroundColor = ''
+
+                allUsers.style.fontWeight = 'normal';
+                reported.style.fontWeight = 'normal';
+                checked.style.fontWeight = 'normal';
+                unchecked.style.fontWeight = 'normal';
+
+                switch (filter) {
+                    case 'reported':
+                        filter = 'reported';
+                        reported.style.border = '2px solid black';
+                        reported.style.fontWeight = 'bold';
+                        reported.style.backgroundColor = 'lightgray';
+                        break;
+                    case 'checked':
+                        filter = 'checked';
+                        checked.style.border = '2px solid black';
+                        checked.style.fontWeight = 'bold';
+                        checked.style.backgroundColor = 'lightgray';
+                        break;
+                    case 'unchecked':
+                        filter = 'unchecked';
+                        unchecked.style.border = '2px solid black';
+                        unchecked.style.fontWeight = 'bold';
+                        unchecked.style.backgroundColor = 'lightgray';
+                        break;
+                    default:
+                        filter = 'allUsers';
+                        allUsers.style.border = '2px solid black';
+                        allUsers.style.fontWeight = 'bold';
+                        allUsers.style.backgroundColor = 'lightgray';
+                        break;
+                };
+                console.log(filter);
+                $.ajax({
+                    url: '@Url.Action("FilterUsers", "ApplicationUser")',
+                    type: 'GET',
+                    data: { filter: filter,
+                            page: page
+                    },
+                    cache: false,
+                    success: function (data) {
+                        $('#usersList').html(data);
+                    },
+                    error: function (data) {
+                        window.alert('Ne radi');
+                    }
+                });
+            }
+
+            $(".page-item").click(function (e) {
+                if ($(this).attr("id") == 'next') {
+                    if (page < @count) {
+                        page++;
+                    }
+                }
+                else if ($(this).attr("id") == 'prev') {
+                    if (page > 1) {
+                        page--;
+
+                    }
+
+                }
+                else
+                    page = $(this).attr("id");
+                //console.log(page);
+                setActiveFilter(filter, page);
+            });
+
+            $('#allUsers').on('click', function () {
+                filter = 'allUsers';
+                setActiveFilter(filter, page);
+            });
+
+            $('#reported').on('click', function () {
+                filter = 'reported';
+                setActiveFilter(filter, page);
+            });
+
+            $('#checked').on('click', function () {
+                filter = 'checked';
+                setActiveFilter(filter, page);
+            });
+
+            $('#unchecked').on('click', function () {
+                filter = 'unchecked';
+                setActiveFilter(filter, page);
+            });
+        });
+    </script>
+}

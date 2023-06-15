@@ -1,0 +1,116 @@
+﻿@model ForAdventure.Models.ViewModels.ProfileVM
+
+@using Microsoft.AspNetCore.Identity
+@using ForAdventure.Service.IService
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IApplicationUserService appuserservice;
+
+<div class="row">
+	<div style="width:10%">
+	</div>
+	<div class="col-md" style="width:80%">
+		<br />
+		<br />
+		<br />
+		<div class="row justify-content-end">
+			<div class="d-flex justify-content-center" style="width:130px;">
+				<a asp-controller="Report" asp-action="Report" asp-route-ReporterId="@appuserservice.GetIdByEmail(UserManager.GetUserName(User))" asp-route-ReportedId="@Model.User.Id" class="text-decoration-none">
+					Report user
+				</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-3">
+				<div class="d-md-flex justify-content-md-center mb-md-2">
+					@if (Model.User.ImageURL == null)
+					{
+						<img src="~/images/profilePicture/withoutImage.jpg"
+							class="img-fluid rounded-circle border border-dark border-3" style="width: 120px; height:120px" />
+					}
+					else
+					{
+						<img src="@Model.User.ImageURL" class="img-fluid rounded-circle border border-dark border-3"
+							 style="width: 120px; height:120px" />
+					}
+				</div>
+			</div>
+			<div class="col-md-5">
+				<p class="h3 pt-1"><i class="bi bi-at"></i>@Model.User.NameInApplication</p>
+				<p class="mb-1">@Model.User.Name @Model.User.LastName</p>
+				<p class="mb-1"><i class="bi bi-geo-alt-fill"></i>@Model.User.City</p>
+				<p class="mb-1"><i class="bi bi-telephone-fill"></i>&nbsp;@Model.User.PhoneNumber</p>
+				<p class="mb-1">E-mail: @Model.User.Email</p>
+			</div>
+		</div>
+		<br />
+		<hr />
+		<br />
+		<div class="d-flex justify-content-around">
+			<ul class="fetch-filter list-group list-group-horizontal-md">
+				<a id="activity" href="#" class="me-md-3" style="font-weight: bold; text-decoration:none;" onclick="setActiveFilter('activity', '@Model.User.Id')">
+					Activities
+				</a>
+				<a id="equipment" href="#" class="me-md-3 ms-md-3" style="text-decoration:none;" onclick="setActiveFilter('equipment', '@Model.User.Id')">
+					Equipments
+				</a>
+				<a id="hotel" href="#" class="ms-md-3" style="text-decoration:none;" onclick="setActiveFilter('hotel', '@Model.User.Id')">
+					Hotels
+				</a>
+			</ul> 
+		</div>
+		<div id="userPost">
+			@await Html.PartialAsync("_UserAdvertisement")
+		</div>
+	</div>
+	<div style="width:10%">
+	</div>
+</div>
+
+@section Scripts
+{
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	function setActiveFilter (filter, userId) {
+
+		var activityLink = document.getElementById('activity');
+		var equipmentLink = document.getElementById('equipment');
+		var hotelLink = document.getElementById('hotel');
+
+		switch (filter) {
+			case 'hotel':
+				activityLink.style.fontWeight = 'normal';
+				equipmentLink.style.fontWeight = 'normal';
+				hotelLink.style.fontWeight = 'bold';
+				break;
+			case 'equipment':
+				activityLink.style.fontWeight = 'normal';
+				equipmentLink.style.fontWeight = 'bold';
+				hotelLink.style.fontWeight = 'normal';
+				break;
+			default:
+				activityLink.style.fontWeight = 'bold';
+				equipmentLink.style.fontWeight = 'normal';
+				hotelLink.style.fontWeight = 'normal';
+				filter = 'activity';
+				break;
+		};
+
+		console.log(filter);
+			console.log(userId);
+			$.ajax({
+				url: '@Url.Action("UserAdvertisement", "ApplicationUser")',
+				type: 'GET',
+				data: { filter: filter, userId: userId },
+				cache: false,
+				success: function (data) {
+					$('#userPost').html(data);
+				},
+				error: function (data) {
+					window.alert('Ne radi');
+				}
+			});
+	}
+</script>
+}

@@ -1,0 +1,64 @@
+﻿@model Equipment
+
+<form method="post">
+    <input asp-for="OwnerId" class="form-control" hidden />
+    <input asp-for="ID" hidden />
+    <div class="border p-3 mt-4" style="max-width: 600px; margin: 0 auto;">
+        <div class="row pb-2">
+            <h2 class="text-primary">Edit your equipment</h2>
+            <hr />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Naziv">Name</label>
+            <input asp-for="Naziv" class="form-control" aria-required="true" placeholder="Name" />
+            <span asp-validation-for="Naziv" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Adresa">Adress</label>
+            <input asp-for="Adresa" class="form-control" aria-required="true" placeholder="Adress" />
+            <span asp-validation-for="Adresa" class="text-danger"></span>
+        </div>
+        <div class=" mb-3">
+            <label asp-for="Lokacija">Location</label>
+            <input asp-for="Lokacija" class="form-control" aria-required="true" placeholder="Location" />
+            <span asp-validation-for="Lokacija" class="text-danger"></span>
+        </div>
+        <div class=" mb-3">
+            <label asp-for="Opis">Description</label>
+            <textarea asp-for="Opis" class="form-control" aria-required="true" placeholder="Description" rows="4"></textarea>
+            <span asp-validation-for="Opis" class="text-danger"></span>
+        </div>
+        <div class=" mb-3">
+            <label asp-for="Cena">Price</label>
+            <input asp-for="Cena" class="form-control" aria-required="true" placeholder="Price" />
+            <span asp-validation-for="Cena" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="EqTypeId"></label>
+            <select asp-for="EqTypeId" asp-items="ViewBag.EquipmentTypesList" class="form-select">
+                <option disabled selected>--Select Equipment type--</option>
+            </select>
+            <span asp-validation-for="EqTypeId" class="text-danger"></span>
+        </div>
+       
+
+        <div class="mb-3">
+        <input asp-for="ImageURLsJson"  class="form-control" hidden />
+    </div>
+        <div class="mb-3">
+            <input asp-for="ImageURLs"  class="form-control" hidden />
+        </div>
+        <div class="row">
+                <div class="col-6">
+                <button type="submit" class="btn btn-primary" style="width:100%">Update</button>
+                </div>
+                <div class="col-6">
+                <a asp-controller="Equipment" asp-action="MyEquipments" asp-route-UserId="@ViewBag.OwnerId" class="btn btn-danger" style="width:100%">Back to List</a>
+                </div>            
+        </div>
+
+</div>
+</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

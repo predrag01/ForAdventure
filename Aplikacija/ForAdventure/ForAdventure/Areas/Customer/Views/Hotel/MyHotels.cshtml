@@ -1,0 +1,127 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ForAdventure.Service.IService
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IApplicationUserService appuserservice;
+
+@model IEnumerable<Hotel>
+@inject IRoomService service
+@inject IHotelService hotelService
+@{
+    ViewData["Title"] = "My Hotels";
+}
+<div class="d-flex flex-column align-items-center">
+    <div class="row mb-4" style="width:100%">
+        <div class="col-6">
+            <h2 class="text-primary">Your Hotels</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Hotel" asp-action="Create" asp-route-OwnerId="@appuserservice.GetIdByEmail(UserManager.GetUserName(User))" class="btn btn-primary">
+                <i class="bi bi-building-fill-add"></i> &nbsp; List your Hotel
+            </a>
+        </div>
+    </div>
+    <br />
+    <div class="hotels align-items-center" style="width:100%">
+        @foreach (var obj in Model)
+        {
+            <div class="row p-3 mb-3" style="width:100%; background-color:#f8f9fa;">
+                <div class="col-12 col-md-3 me-4 mb-4">
+                    <img class="img-fluid" style="width:300px;height:auto;border-radius:5%;" src="@obj.ImageURLs.FirstOrDefault()" alt="Hotel Photo">
+                </div>
+                <div class="col-12 col-md-5">
+                    <div class="d-flex flex-row">
+                        <a asp-controller="Hotel" asp-action="HotelPage" asp-route-HotelId="@obj.Id" class="">
+                        </a>
+                            <div class="d-flex flex-column mb-2 flex-wrap justify-content-between">
+                                <div class="d-flex flex-row">
+                                    <div>
+                                        <a asp-controller="Hotel" asp-action="HotelPage" asp-route-HotelId="@obj.Id" style="text-decoration:none">
+                                            <p style="font-size:30px" class="text-primary">@obj.Name </p>
+                                        </a>
+                                    </div>
+                                    <div class="d-flex flex-row ms-3">
+                                        <a asp-controller="Hotel" asp-action="Edit" asp-route-id="@obj.Id" class="btn">
+                                            <i class="bi bi-pencil-square" style="font-size:20px;color:black;"></i>
+                                        </a>
+                                        <a class="btn" onclick="deleteHotel('/Customer/Hotel/Delete/@obj.Id')">
+                                            <i class="bi bi-trash" style="font-size:20px;color:black;"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row-address-rooms">
+                                    <div>
+                                        <p style="font-size:17px" class="text-primary">@obj.Address, @obj.Location</p>
+                                    </div>
+                                    <div>
+                                        @if (service.RoomCount(obj.Id) == 0)
+                                        {
+                                            <p>No rooms available.</p>
+                                        }
+                                        else
+                                        {
+                                            if (service.RoomCount(obj.Id) <= 3)
+                                            {
+                                                if (service.RoomCount(obj.Id) == 1)
+                                                {
+                                                    <p>@service.RoomCount(obj.Id) room</p>
+                                                }
+                                                else
+                                                {
+                                                    <p>@service.RoomCount(obj.Id) rooms</p>
+                                                }
+                                            }
+                                        }
+
+                                    </div>
+
+
+                                </div>
+                                <div class="d-flex flex-wrap align-items-baseline">
+                                    <a asp-controller="Room" asp-action="Create" asp-route-HotelId="@obj.Id" class="btn btn-primary">&nbsp;&nbsp; <i class="bi bi-plus-circle"></i> &nbsp; Add Room</a>
+                                    <a asp-controller="Room" asp-action="Index" asp-route-HotelId="@obj.Id" class="btn" style="text-decoration:none">Rooms</a>
+                                </div>
+
+                            </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@section Scripts {
+    <script>
+        function deleteHotel(url) {
+            Swal.fire({
+                title: 'Are you sure you want to delete this hotel?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        success: function (data) {
+                            if (data.success) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your hotel has been deleted.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.href = data.redirectUrl;
+                                });
+                            }
+                        }
+                    })
+                }
+            })
+        };
+    </script>
+}

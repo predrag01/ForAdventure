@@ -1,0 +1,142 @@
+﻿@model EquipmentsViewModel
+@using Microsoft.AspNetCore.Identity
+@using ForAdventure.Service.IService
+@using ForAdventureWeb.Areas.Customer.ViewModels;
+@using ForAdventure.Models.ViewModels;
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IApplicationUserService appuserservice;
+@inject IEquipmentService equipmentService
+@{
+    ViewData["Title"] = "Index";
+    int count = (equipmentService.Equipment.GetAll().Count()) / 5 + 1;
+}
+
+<div class="container p-3">
+    <div class="d-flex flex-row justify-content-end">
+        <div class="">
+            <a asp-controller="Equipment" asp-action="Create" asp-route-OwnerId="@appuserservice.GetIdByEmail(UserManager.GetUserName(User))" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> &nbsp; List new equipment
+            </a>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-2">
+            <div class="list-group">
+                @foreach (var obj in Model.EquipmentTypes)
+                {
+                    <div class="equipmentType list-group-item btn btn-outline-primary mb-2" data-type="@obj.Id" style="border:2px solid black; width: 100%; word-break: break-word;">
+                         @obj.Naziv
+                    </div>
+                }
+                <div class="equipmentType list-group-item btn btn-outline-primary" data-type="0" style="border:2px solid black; width: 100%; word-break: break-word;">
+                    Turn off filter
+                </div>
+            </div>
+            <div class="sortingDropdown mt-2">
+                <select id="sortingSelect" class="form-select form-select-sm">
+                    <option value="name">Sort by Name</option>
+                    <option value="price low">Sort by Price (Ascending)</option>
+                    <option value="price high">Sort by Price (Descending)</option>
+                    <option value="old">Oldest to Newest</option>
+                    <option value="new">Newest to Oldest</option>
+                    <option value="location">Sort by Location</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-10">
+            <div class="contentContainer">
+                <div id="filteredEquipmentContainer">
+                    @await Html.PartialAsync("_FilteredEquipmentList")
+                </div>
+                <div class="d-flex justify-content-center">
+                    <nav aria-label="...">
+                        <ul class="pagination">
+
+                            <li class="page-item" id="prev">
+                                <a class="page-link" href="#">Previous</a>
+                            </li>
+                            @for (int i = 1; i <= count; i++)
+                            {
+                                <li class="page-item" id="@i">
+                                    <a class="page-link" href="#">@i</a>
+
+                                </li>
+                            }
+                            <li class="page-item" id="next">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            var page = 1;
+
+            var dropdown = $('.sortingDropdown');
+            var isDropdownVisible = false;
+            var equipmentTypeId=0;
+
+
+            $('.equipmentType').on('click', function () {
+                equipmentTypeId = $(this).data('type');
+
+                filterEquipments(equipmentTypeId, page);
+            });
+
+            $('#sortingSelect').on('change', function () {
+                filterEquipments(equipmentTypeId, page);
+            });
+
+            function filterEquipments(equipmentTypeId, page) {
+                var sortOption = $('#sortingSelect').val();
+                //console.log(sortOption);
+                //console.log(page);
+                $.ajax({
+                    url: '@Url.Action("Filter","Equipment")',
+                    type: 'GET',
+                    data: {
+                        equipmentTypeId: equipmentTypeId,
+                        sortOption: sortOption,
+                        page: page,
+                    },
+                    success: function (response) {
+                        $('#filteredEquipmentContainer').html(response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                        console.log(equipmentTypeId);
+                        console.log(sortOption);
+                        console.log(page);
+                    }
+                });
+            }
+            $(".page-item").click(function (e) {
+                if ($(this).attr("id") == 'next') {
+                    if (page < @count) {
+                        page++;
+                    }
+                }
+                else if ($(this).attr("id") == 'prev') {
+                    if (page > 1) {
+                        page--;
+
+                    }
+
+                }
+                else
+                    page = $(this).attr("id");
+                //console.log(page);
+                filterEquipments(equipmentTypeId, page);
+            });
+        });
+    </script>
+}

@@ -1,0 +1,87 @@
+﻿@model Equipment
+
+<form method="post" enctype="multipart/form-data">
+    <input asp-for="OwnerId" value="@ViewBag.OwnerId" class="form-control" hidden />
+
+    <div class="border p-3 mt-4" style="max-width: 600px; margin: 0 auto;">
+        <div class="row pb-2">
+            <h2 class="text-primary">Add new Equipment</h2>
+            <hr />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Naziv">Name</label>
+            <input asp-for="Naziv" class="form-control" aria-required="true" />
+            <span asp-validation-for="Naziv" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ImageURLs"></label>
+            <input type="file" name="files" id="uploadBox" accept="image/*" class="form-control" multiple/>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Adresa">Address</label>
+            <input asp-for="Adresa" class="form-control" aria-required="true" />
+            <span asp-validation-for="Adresa" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Lokacija">Location</label>
+            <input asp-for="Lokacija" class="form-control" aria-required="true" />
+            <span asp-validation-for="Lokacija" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Opis">Description</label>
+            <input asp-for="Opis" class="form-control" aria-required="true" />
+            <span asp-validation-for="Opis" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Cena">Price</label>
+            <input asp-for="Cena" class="form-control" aria-required="true" />
+            <span asp-validation-for="Cena" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="EqTypeId">Type of equipment</label>
+            <select asp-for="EqTypeId" asp-items="ViewBag.EquipmentTypesList" class="form-select">
+                <option disabled selected>--Select Equipment type--</option>
+            </select>
+            <span asp-validation-for="EqTypeId" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                    <button type="submit" style=" width:100%" class="btn btn-primary">Create</button>
+            </div>
+            <div class="col-6">
+                <a asp-controller="Equipment" style=" width:100%" asp-action="MyEquipments" asp-route-UserId="@ViewBag.OwnerId" class="btn btn-danger">Back to List</a>
+            </div>
+        </div>
+
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#uploadBox').on('change', function (e) {
+                var files = e.target.files;
+
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+                    var img = new Image();
+
+                    img.onload = function () {
+
+                        if (this.width < 640 || this.height < 400) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Image must be at least 640x400px!'
+                            })
+                            $('#uploadBox').val('');
+                        }
+                    };
+
+                    img.src = URL.createObjectURL(file);
+                }
+            });
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

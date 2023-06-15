@@ -1,0 +1,40 @@
+﻿@page
+@model EmailModel
+@{
+    ViewData["Title"] = "Manage Email";
+    ViewData["ActivePage"] = ManageNavPages.Email;
+}
+
+
+<partial name="_StatusMessage" for="StatusMessage" />
+<div class="row">
+    <div style="width:30%">
+    </div>
+    <div style="width:40%">
+        <br />
+        <h3 class="text-md-center">@ViewData["Title"]</h3>
+        <hr />
+        <form id="email-form" method="post">
+            <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Email" class="form-control" placeholder="Please enter your email." disabled />
+                <label asp-for="Email" class="form-label"></label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.NewEmail" class="form-control" autocomplete="email" aria-required="true" placeholder="Please enter new email." />
+                <label asp-for="Input.NewEmail" class="form-label"></label>
+                <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
+            </div>
+            <div class="w-100 d-md-flex justify-content-md-end">
+                <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="w-30 btn btn-md btn-primary me-md-2">Change email</button>
+                <a asp-area="Identity" asp-page="/Account/Manage/Index" class=" w-30 btn btn-md btn-outline-secondary">Back to Account</a>
+            </div>
+        </form>
+    </div>
+    <div style="width:30%">
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

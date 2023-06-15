@@ -1,0 +1,29 @@
+﻿@model EquipmentType
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <form method="post">
+            <div class="border p-3 mt-4">
+                <div class="row pb-2">
+                    <h2 class="text-primary">Add new equipment type</h2>
+                    <hr />
+                </div>
+                <div class="mb-3">
+                    <label >Equipment Type</label>
+                    <input asp-for="Naziv" class="form-control" />
+                    <span asp-validation-for="Naziv" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:150px">Create</button>
+                <a asp-controller="ActivityType" asp-action="Index" class="btn btn-secondary" style="width:150px">View all equipment types</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+
+

@@ -1,0 +1,87 @@
+﻿@model ActivitiesViewModel
+@using ForAdventure.Models.ViewModels;
+@using ForAdventureWeb.Areas.Customer.ViewModels;
+@using System.Globalization;
+
+<div class="container">
+    <div class="row">
+        <div class="col-md">
+            @foreach (var obj in Model.Activities)
+            {
+                if (obj.DateFrom >= DateTime.Today)
+                {
+                    <a asp-controller="Activity" asp-action="ActivityPage" asp-route-ActivityId="@obj.Id" style="text-decoration:none">
+                        <div class="row p-3" style="background-color:#f8f9fa">
+                            <div class="col-12 col-md-4 mb-3">
+                                @if (!string.IsNullOrEmpty(obj.ImageURL))
+                                {
+                                    <img class="img-fluid" style="width:300px;height:auto;border-radius:5%;" src="@obj.ImageURL" alt="Activity Photo" />
+                                }
+                                else
+                                {
+                                    <img class="img-fluid" style="width:300px;height:auto;border-radius:5%;" src="/default-images/no-image.jpg" alt="Default Photo" />
+                                }
+                            </div>
+                        
+                            <div class="col-12 col-md-8 activity-info">
+                                <div class="d-flex flex-column justify-content-between" style="height:90%">
+                                    <div class="row">
+                                        <h4 class="text-primary">@obj.Name</h4>  
+                                    </div>
+                                    <div class="row">
+                                        @if (obj.ActivityType != null)
+                                        {
+                                            <p class="text-primary"><i class="bi bi-tree-fill"></i> @obj.ActivityType.Type</p>
+                                        }
+                                    </div>
+                                    <div class="row">
+                                
+                                            <p class="text-primary"><i class="bi bi-geo-alt-fill"></i>  @obj.Location, @obj.Address</p>
+                                
+                                    </div>
+                                    <div class="row">
+
+                                        <p class="text-primary"><i class="bi bi-calendar3"></i> From: @obj.DateFrom.ToShortDateString() <i class="bi bi-calendar3"></i> To: @obj.DateTo.ToShortDateString()</p>
+                                
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="">
+                                            @{
+                                                int LeftPlaces = obj.Capacity - obj.CurrentNumberPeople;
+                                                if (LeftPlaces <= 3)
+                                                {
+                                                    if (LeftPlaces == 1)
+                                                    {
+                                                        <p>Only 1 place left</p>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p>Only @LeftPlaces places left</p>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <p>@LeftPlaces places left</p>
+                                                }
+                                            }
+
+                                        </div>
+                               
+                                        <div class="me-5">
+
+                                            <p class="text-primary" style="font-size:20px"><i class="bi bi-tag-fill"></i> @obj.Price.ToString("C", new CultureInfo("en-MNE"))</p>
+                               
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </a>
+                    <br />
+                }
+            }
+        </div>
+    </div>
+</div>

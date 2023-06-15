@@ -1,0 +1,169 @@
+﻿@model ShoppingCart
+@using ForAdventure.Service.IService
+@using System.Globalization;
+@using System.Net.Http;
+
+@{
+    ViewData["Title"] = Model.Activity.Name;
+    @inject IApplicationUserService appuserservice;
+    @inject IActivityReservationService activityresservice;
+}
+<div class="container">
+    <div class="row d-flex flex-row justify-content-between">
+        <div class="">
+            <div class="row">
+                <div class="container-pictures mt-4 col-5">
+                    @if (!string.IsNullOrEmpty(Model.Activity.ImageURL))
+                    {
+                        <img class="activity-border-radius img-fluid" src="@Model.Activity.ImageURL" alt="Activity Photo" style="width:600px;height:auto;border-radius:5%;">
+                    }
+                    else
+                    {
+                        <img class="activity-border-radius img-fluid" src="/default-images/no-image.jpg" alt="Default Photo" style="width:600px;height:auto;border-radius:5%;">
+                    }
+                    <p>@Model.Activity.Location: <span id="weather-icon"></span> <span id="weather-forecast"></span> <span id="weather-temperature"></span></p>
+                </div>
+                <div class="col-7 d-flex flex-column">
+                    <div class="mt-4">
+                        <h1>@Model.Activity.Name</h1>
+                        <p><i class="bi bi-info-circle-fill"></i> @Model.Activity.Description</p>
+                    </div>
+                    <div class="d-flex flex-row justify-content-around flex-wrap">
+                        <div>
+                            <div class="mb-2">
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <span><em>Posted by</em></span>
+                                    <a asp-area="Admin" asp-controller="ApplicationUser" asp-action="Profile" asp-route-id="@Model.Activity.UserId">@Model.Activity.User.NameInApplication</a>
+                                }
+                            </div>
+
+                            <p><i class="bi bi-tree-fill"></i> @Model.Activity.ActivityType.Type</p>
+                            <p><i class="bi bi-geo-alt-fill"></i> @Model.Activity.Location, @Model.Activity.Address</p>
+                                @{
+                                    int LeftPlaces = @Model.Activity.Capacity - @Model.Activity.CurrentNumberPeople;
+                                    if (LeftPlaces <= 3)
+                                    {
+                                        if (LeftPlaces == 1)
+                                        {
+                                        <p>Only 1 place left</p>
+                                        }
+                                        else
+                                        {
+                                        <p>Only @LeftPlaces places left</p>
+                                        }
+                                    }
+                                    else
+                                    {
+                                    <p>@LeftPlaces places left</p>
+                                    }
+                                }
+                        </div>
+
+                        <div>
+                            <div class="activity-description2 flex-column">
+                                <p>Capacity: @Model.Activity.Capacity</p>
+                                <p>Skill Level: @Model.Activity.SkillLevel</p>
+                                <p><i class="bi bi-calendar3"></i> Date From: @Model.Activity.DateFrom.ToShortDateString() @Model.Activity.DateFrom.ToShortTimeString()</p>
+                                <p><i class="bi bi-calendar3"></i> Date To: @Model.Activity.DateTo.ToShortDateString() @Model.Activity.DateTo.ToShortTimeString()</p>
+                                <p style="font-size:20px"><i class="bi bi-tag-fill"></i> @Model.Activity.Price.ToString("C", new CultureInfo("en-MNE"))</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        @{
+                            if (Model.ApplicationUserId != Model.Activity.UserId)
+                            {
+                                <div class="reservation" @((Model.ApplicationUserId == Model.Activity.UserId) ? "hidden" : "")>
+                                    <form method="post" asp-action="ActivityPage">
+                                        <div class="row d-flex justify-content-between align-items-baseline">
+                                            <div class="col-md-6">
+                                                <div class="numberofpeople mb-2">
+                                                    <input asp-for="@Model.ActivityId" hidden />
+                                                    <input asp-for="@Model.Id" hidden>
+                                                    <input asp-for="@Model.EquipmentId" hidden>
+                                                    <input asp-for="@Model.DateFromEquipment" hidden>
+                                                    <input asp-for="@Model.DateToEquipment" hidden>
+                                                    <input asp-for="@Model.DateFromRoom" hidden>
+                                                    <input asp-for="@Model.DateToRoom" hidden>
+                                                    <input asp-for="@Model.RoomId" hidden>
+                                                    <label for="NumberofPeople">Number of people:</label>
+                                                    <input type="number" asp-for="@Model.NumberOfPersons">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 text-end mt-3 d-flex justify-content-end">
+
+                                                <button type="submit" class="btn btn-primary">Reserve</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div>
+                @{
+                    if (Model.ApplicationUserId == Model.Activity.UserId)
+                    {
+                        <p style="font-size:17px" class="text-primary"><i class="bi bi-people-fill"></i> People who booked your activity: </p>
+                        IEnumerable<ActivityReservation> activity = activityresservice.GetUsersbyActivity(Model.ActivityId);
+                        foreach (ActivityReservation e in activity)
+                        {
+                            ApplicationUser a = appuserservice.GetUserById(e.ApplicationUserId);
+                            <div class="d-flex p-3 align-items-center mb-3 col-5" style="background-color:#f8f9fa;">
+                                @if (appuserservice.GetImageURLByEmail(a.UserName) == null)
+                                {
+                                    <img src="~/images/profilePicture/withoutImage.jpg" alt="Profile Picture" class="rounded-circle me-3" style="width: 80px; height: 80px;">
+                                }
+                                else
+                                {
+                                    <img src="@a.ImageURL" alt="Profile Picture" class="rounded-circle me-3" style="width: 80px; height: 80px;">
+                                }
+                                <div>
+                                    <a asp-area="Admin" asp-controller="ApplicationUser" asp-action="Profile" asp-route-id="@e.ApplicationUserId" class="text-primary" style="text-decoration:none; font-size:20px;"> <i class="bi bi-at"></i>@a.NameInApplication</a>
+                                    <p style="font-size: 17px" class="text-secondary">@a.Name @a.LastName</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function getWeatherForecast() {
+        try {
+            var apiKey = "c5f0bb882767f54fd4e28ac4b974effe";
+            var location = "@Model.Activity.Location";
+            var apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}`;
+
+            var response = await fetch(apiUrl);
+            var data = await response.json();
+            
+
+            if (data.weather && data.weather.length > 0) {
+                var weatherIcon = data.weather[0].icon;
+                var weatherForecast = data.weather[0].description;
+                var temperature = Math.round(data.main.temp - 273.15);
+                document.getElementById("weather-icon").innerHTML = `<img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="Weather Icon">`;
+                document.getElementById("weather-forecast").innerText = weatherForecast;
+                document.getElementById("weather-temperature").innerText = temperature + "°C";
+            } else {
+                console.log("Nema dostupnih podataka o vremenskoj prognozi.");
+            }
+
+        } catch (error) {
+            console.log("Greška prilikom dobavljanja vremenske prognoze:", error);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", getWeatherForecast);
+</script>
+
+
+

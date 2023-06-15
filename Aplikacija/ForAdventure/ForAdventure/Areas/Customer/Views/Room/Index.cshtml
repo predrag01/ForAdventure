@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Room>
+@using ForAdventure.Service.IService
+@using System.Globalization;
+@inject IHotelService _hotelService
+@inject IRoomTypeService _roomTypeService
+@{
+    ViewData["Title"] = "Index";
+    int HotelID = ViewBag.HotelId;
+}
+<div class="d-flex flex-column align-items-center">
+    <div class="d-flex flex-row justify-content-between m-4" style="width:70%">
+        <div class="">
+            <h2 class="text-primary">@ViewBag.HotelName Room List</h2>
+        </div>
+        <div class="">
+            <a asp-controller="Room" asp-action="Create" asp-route-HotelId="@HotelID" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> &nbsp; Add Rooms
+            </a>
+        </div>
+    </div>
+    <div class="d-flex flex-column align-items-end justify-content-center" style="width:70%">
+        @foreach(var obj in Model)
+        {
+            obj.RoomType = _roomTypeService.GetRoomTypeById(obj.RoomTypeId);
+            <div style="background-color:#f8f9fa;width:100%" class="mb-2 p-3">
+                <div class="d-flex flex-column">
+                
+                        <div class="room-type">
+                            <p>@obj.RoomType.Type </p>
+                        </div>
+                        <div class="room-beds-price">
+                            <div class="room-beds">
+                                @{
+                                    if (@obj.NumOfBeds == 1)
+                                    {
+                                        <p>@obj.NumOfBeds bed</p>
+                                    }
+                                    else
+                                    {
+                                        <p>@obj.NumOfBeds beds</p>
+                                    }
+                                }
+                                <div class="room-price">
+                                    <p>@obj.PricePerNight.ToString("C", new CultureInfo("en-MNE")) per night </p>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="d-flex justify-content-center" role="group">
+                    <a class="btn btn-danger" onclick="deleteRoom('/Customer/Room/Delete/@obj.Id')"><i class="bi bi-trash"></i>&nbsp;&nbsp;Delete</a>
+                </div>
+
+            </div>
+        }
+    </div>
+</div>
+@section Scripts {
+    <script>
+        function deleteRoom(url) {
+            Swal.fire({
+                title: 'Are you sure you want to delete this room?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        success: function (data) {
+                            if (data.success) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Room successfully deleted.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.href = data.redirectUrl;
+                                });
+                            }
+                        }
+                    })
+                }
+            })
+        };
+    </script>
+}

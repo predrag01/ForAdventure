@@ -1,0 +1,65 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ForAdventure.Service.IService
+@using System.Security.Policy;
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IApplicationUserService service;
+
+@{
+    var imageUrl = service.GetImageURLByEmail(UserManager.GetUserName(User));
+}
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+       <li class="nav-item dropdown ps-md-4" enctype="multipart/form-data">
+            <a class="nav-link dropdown-toggle text-black" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                @if (service.GetImageURLByEmail(UserManager.GetUserName(User))==null)
+                {
+                    <img src="~/images/profilePicture/withoutImage.jpg"
+                         class="img-fluid rounded-circle border border-dark border-3 text-black" style="width: 20px; height:20px" /> @service.GetUsernameByEmail(UserManager.GetUserName(User))
+                }
+                else
+                {
+                    <img src="@service.GetImageURLByEmail(UserManager.GetUserName(User))"
+                         class="img-fluid rounded-circle border border-dark border-3"
+                         style="width: 20px; height:20px" /> @service.GetUsernameByEmail(UserManager.GetUserName(User))
+                }
+                
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item text-black" asp-area="Identity" asp-page="/Account/Manage/Index">Account</a>
+                <a class="dropdown-item text-black" asp-area="Admin" asp-controller="ApplicationUser" asp-action="Profile" asp-route-id="@service.GetIdByEmail(UserManager.GetUserName(User))">Profile</a>
+                <a class="dropdown-item text-black" asp-area="Customer" asp-controller="Hotel" asp-action="MyHotels">View your hotels</a>
+                <a class="dropdown-item text-black" asp-area="Customer" asp-controller="Activity" asp-action="MyActivities" asp-route-UserId="@service.GetIdByEmail(UserManager.GetUserName(User))">View your activities</a>
+                <a class="dropdown-item text-black" asp-area="Customer" asp-controller="Equipment" asp-action="MyEquipments" asp-route-UserId="@service.GetIdByEmail(UserManager.GetUserName(User))">View your equipments</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item">
+                    <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button id="logout" type="submit" class="nav-link btn btn-link text-black  border-0">Logout</button>
+                    </form>
+                </a>
+            </div>
+       </li>                                                           
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-black" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-black" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    </li>
+}
+</ul>
+
+<script>
+    if (localStorage.getItem('profilePicture') === null) {
+        var img = new Image();
+        img.onload = function () {
+            localStorage.setItem('profilePicture', imageUrl);
+        };
+        img.src = imageUrl;
+    }
+</script>

@@ -1,0 +1,30 @@
+﻿@model EquipmentsViewModel
+@using ForAdventure.Models.ViewModels
+@using ForAdventureWeb.Areas.Customer.ViewModels;
+
+@foreach (var obj in Model.Equipments)
+{
+    <a asp-controller="Equipment" asp-action="EquipmentPage" asp-route-EquipmentId="@obj.ID" style="text-decoration:none">
+        <div class="row p-3 mb-3" style="background-color:#f8f9fa">
+            <div class="col-4">
+                <img class="img-fluid" style="width:300px;height:auto;border-radius:5%;" src="@obj.ImageURLs.FirstOrDefault()" alt="Equipment Photo">
+            </div>
+            <div class="col-7 equipment-info">
+                <div class="row">
+                    <p style="font-size:30px" class="text-primary">@obj.Naziv</p>
+
+                </div>
+                <div class="row">
+                    <p style="font-size:17px" class="text-primary"><i class="bi bi-geo-alt-fill"></i> Address: @obj.Adresa, @obj.Lokacija</p>
+                </div>
+                <div class="row" style="text-overflow: ellipsis; overflow:hidden; width: 100%; white-space:nowrap;">
+                    <p style="font-size:17px" class="text-primary"><i class="bi bi-info-circle-fill"></i> Description: @obj.Opis</p>
+                </div>
+                <div class="row">
+                    <p style="font-size:17px" class="text-primary"><i class="bi bi-tag"></i> Price: @obj.Cena</p>
+                </div>
+            </div>
+        </div>
+        
+    </a>
+}

@@ -1,0 +1,116 @@
+﻿@model ShoppingCart
+@using ForAdventure.Service.IService
+@using System.Globalization;
+@{
+    ViewData["Title"] = Model.Equipment.Naziv;
+    @inject IApplicationUserService appuserservice;
+    @inject IEquipmentReservationService eqresservice;
+    
+}
+<br/>
+<div class="containter d-flex flex-row flex-wrap">
+    <div class="container-pictures">
+        <div class="first-row-pics">
+            <div class="medium-pictures">
+                @{
+                    var firstrow = Model.Equipment.ImageURLs.Skip(1).Take(2);
+                    foreach (var file in firstrow)
+                    {
+                        <div class="medium-item">
+                            <img class="hotel-border-radius" src="@file" alt="Hotel Photo">
+                        </div>
+                    }
+
+                }
+            </div>
+            <div class="biggest-picture">
+                <img class="hotel-border-radius" src="@Model.Equipment.ImageURLs.FirstOrDefault()" alt="Hotel Photo">
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="col-7 equipment-info">
+        <div class="row pt-2">
+            <h1  class="text-primary"> @Model.Equipment.Naziv</h1>
+        </div>
+        @if (User.Identity.IsAuthenticated && Model.Equipment.OwnerId!=null)
+            {
+                <span><em>Posted by</em></span>
+                <a  asp-area="Admin" asp-controller="ApplicationUser" asp-action="Profile" asp-route-id="@Model.Equipment.OwnerId">@Model.Equipment.Owner.NameInApplication</a>
+            }
+        <div class="row mt-2">
+            <p style="font-size:17px" class="text-primary"><i class="bi bi-info-circle-fill"></i> Description:</p>
+            <p class=""> @Model.Equipment.Opis</p>
+        </div>
+        <div class="row">
+            <p style="font-size:17px" class="text-primary"><i class="bi bi-geo-alt-fill"></i>Adress: @Model.Equipment.Adresa, @Model.Equipment.Lokacija</p>
+        </div>
+        <div class="row">
+            <p style="font-size:17px" class="text-primary"><i class="bi bi-tag"></i> Price per day: @Model.Equipment.Cena.ToString("C", new CultureInfo("en-MNE"))</p>
+        </div>
+        <div class="row">
+            <p style="font-size:17px" class="text-primary">Equipment type: @Model.Equipment.EqType.Naziv</p>
+        </div>
+        <br />
+        <div>
+            @{
+                if (Model.ApplicationUserId == Model.Equipment.OwnerId)
+                {
+                    <p style="font-size:17px" class="text-primary">People that booked your equipment: </p>
+                    IEnumerable<EquipmentReservation> equipment = eqresservice.GetUsersbyEquipment(Model.EquipmentId);
+                    foreach (EquipmentReservation e in equipment)
+                    {
+                        
+                        ApplicationUser a = appuserservice.GetUserById(e.ApplicationUserId);
+                        <div class="d-flex p-3 align-items-center mb-3 col-5" style="background-color:#f8f9fa;">
+                            @if (appuserservice.GetImageURLByEmail(a.UserName) == null)
+                            {
+                                <img src="~/images/profilePicture/withoutImage.jpg" alt="Profile Picture" class="rounded-circle me-3" style="width: 80px; height: 80px;">
+                            }
+                            else
+                            {
+                                <img src="@a.ImageURL" alt="Profile Picture" class="rounded-circle me-3" style="width: 80px; height: 80px;">
+                            }
+                            <div>
+                                <a asp-area="Admin" asp-controller="ApplicationUser" asp-action="Profile" asp-route-id="@e.ApplicationUserId" class="text-primary" style="text-decoration:none; font-size:20px;"> <i class="bi bi-at"></i>@a.NameInApplication</a>
+                                <p style="font-size: 17px" class="text-secondary">@a.Name @a.LastName</p>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <form method="post">
+                    <div class="row">
+                            <div class="col mb-3">
+                                <p style="font-size:17px" class="text-primary"><i class="bi bi-calendar3"></i>&nbsp;From: </p>
+                                <input asp-for="DateFromEquipment" type="date" required class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="DateFromEquipment" class="text-danger"></span>
+                            </div>
+                            <div class="col mb-3">
+                                <p style="font-size:17px" class="text-primary"><i class="bi bi-calendar3"></i>&nbsp;To: </p>
+                                <input asp-for="DateToEquipment" type="date" required class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="DateToEquipment" class="text-danger"></span>
+                            </div>
+                    </div>
+                        
+                        <br />
+                        <input asp-for="@Model.Id" hidden>
+                        <input asp-for="@Model.ActivityId" hidden>
+                        <input asp-for="@Model.NumberOfPersons" hidden>
+                        <input asp-for="@Model.DateFromRoom" hidden>
+                        <input asp-for="@Model.DateToRoom" hidden>
+                        <input asp-for="@Model.RoomId" hidden>
+                        <div class="d-flex flex-row justify-content-end">
+                            <div class="col-md-6 text-end mt-3 ">
+                                <button type="submit" class="btn btn-primary">Reserve</button>
+                            </div>
+                        </div>
+                        
+                    </form>
+                }
+            }
+        </div>
+    </div>
+</div>
+

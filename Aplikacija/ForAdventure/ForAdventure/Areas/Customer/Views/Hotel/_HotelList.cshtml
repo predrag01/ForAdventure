@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Hotel>
+@using ForAdventure.Service.IService
+@inject IRoomService service
+@using System.Globalization;
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject IApplicationUserService appuserservice;
+<div class="hotels">
+    @foreach (var obj in Model)
+    {
+        <a asp-controller="Hotel" asp-action="HotelPage" asp-route-HotelId="@obj.Id" style="text-decoration:none">
+            <div class="row p-3" style="background-color:#f8f9fa">
+                <div class="col-12 col-md-4">
+                    <img class="img-fluid" style="width:300px;height:auto;border-radius:5%;" src="@obj.ImageURLs.FirstOrDefault()" alt="Hotel Photo">
+                </div>
+                <div class="col-12 col-md-7">
+                    <div class="row">
+                        <p style="font-size:30px" class="text-primary">@obj.Name</p>
+                    </div>
+                    <div class="row-address-rooms">
+                        <div>
+                            <p style="font-size:17px" class="text-primary"><i class="bi bi-geo-alt-fill"></i>&nbsp;&nbsp;@obj.Address, @obj.Location</p>
+                        </div>
+                        <div>
+                            @if (service.RoomCount(obj.Id) == 0)
+                            {
+                                <p>No rooms available.</p>
+                            }
+                            else
+                            {
+                                if (service.RoomCount(obj.Id) <= 3)
+                                {
+                                    if (service.RoomCount(obj.Id) == 1)
+                                    {
+                                        <p><i class="bi bi-asterisk"></i>&nbsp;&nbsp;Only @service.RoomCount(obj.Id) room left</p>
+                                    }
+                                    else
+                                    {
+                                        <p><i class="bi bi-asterisk"></i>&nbsp;&nbsp;Only @service.RoomCount(obj.Id) rooms left</p>
+                                    }
+                                }
+                                <div>
+                                    <p>From @service.GetLowestPrice(obj.Id).ToString("C", new CultureInfo("en-MNE"))</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </a>
+    }
+    
+
+</div>
+

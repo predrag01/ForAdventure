@@ -1,0 +1,100 @@
+﻿@model Hotel
+
+<form method="post" enctype="multipart/form-data">
+	<input asp-for="OwnerId" value="@ViewBag.OwnerId" class="form-control" hidden />
+	<div class="border p-3 mt-4 row">
+		<div class="row pb-2">
+			<h2 class="text-primary">List your Hotel</h2>
+			<hr />
+		</div>
+		<div class="mb-3">
+			<label asp-for="Name"></label>
+			<input asp-for="Name" class="form-control"/>
+			<span asp-validation-for="Name" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label asp-for="ImageURLs"></label>
+			<input type="file" name="files" id="uploadBox" accept="image/*" class="form-control" multiple required/>
+		</div>
+		<div class="mb-3 col-6">
+			<label asp-for="Location"></label>
+			<input asp-for="Location" class="form-control" />
+			<span asp-validation-for="Location" class="text-danger"></span>
+		</div>
+		<div class="mb-3 col-6">
+			<label asp-for="Address"></label>
+			<input asp-for="Address" class="form-control" />
+			<span asp-validation-for="Address" class="text-danger"></span>
+		</div>
+		<div class="mb-3 col-6">
+			<label asp-for="Phone"></label>
+			<input asp-for="Phone" class="form-control" />
+			<span asp-validation-for="Phone" class="text-danger"></span>
+		</div>
+		<div class="mb-3 col-6">
+			<label asp-for="Email"></label>
+			<input asp-for="Email" class="form-control" />
+			<span asp-validation-for="Email" class="text-danger"></span>
+		</div>
+		<div class="mb-3 checkbox-container flex-wrap">
+			<div class="form-check ms-2" >
+				<input asp-for="Pool" class="form-check-input" type="checkbox" value="" id="flexCheckDefault" value="true">
+				<label asp-for="Pool" class="form-check-label" for="flexCheckDefault">
+				</label>
+			</div>
+			<div class="form-check ms-2">
+				<input asp-for="Gym" class="form-check-input" type="checkbox" value="" id="flexCheckDefault" value="true" />
+				<label asp-for="Gym" class="form-check-label" for="flexCheckDefault"></label>
+			</div>
+			<div class="form-check ms-2">
+				<input asp-for="Spa" class="form-check-input" type="checkbox" value="" id="flexCheckDefault" value="true" />
+				<label asp-for="Spa" class="form-check-label" for="flexCheckDefault"></label>
+			</div>
+			<div class="form-check ms-2">
+				<input asp-for="Sauna" class="form-check-input" type="checkbox" value="" id="flexCheckDefault" value="true" />
+				<label asp-for="Sauna" class="form-check-label" for="flexCheckDefault"></label>
+			</div>
+			<div class="form-check ms-2">
+				<input asp-for="Restaurant" class="form-check-input" type="checkbox" value="" id="flexCheckDefault" value="true" />
+				<label asp-for="Restaurant" class="form-check-label" for="flexCheckDefault"></label>
+			</div>
+			<div class="form-check ms-2">
+				<input asp-for="Parking" class="form-check-input" type="checkbox" value="" id="flexCheckDefault" value="true" />
+				<label asp-for="Parking" class="form-check-label" for="flexCheckDefault"></label>
+			</div>
+		</div>
+		<button type="submit" class="btn btn-primary" style="width:150px">Create</button>
+		<a asp-controller="Hotel" asp-action="MyHotels" class="btn btn-secondary" style="width:150px">View your hotels</a>
+	</div>
+</form>
+@section Scripts{
+	<script>
+		$(document).ready(function () {
+			$('#uploadBox').on('change', function (e) {
+				var files = e.target.files;
+
+				for (var i = 0; i < files.length; i++) {
+					var file = files[i];
+					var img = new Image();
+
+					img.onload = function () {
+
+						if (this.width < 640 || this.height < 400) {
+							Swal.fire({
+								icon: 'error',
+								title: 'Oops...',
+								text: 'Image must be at least 640x400px!'
+							})
+							$('#uploadBox').val('');
+						}
+					};
+
+					img.src = URL.createObjectURL(file);
+				}
+			});
+		});
+	</script>
+	@{
+		<partial name="_ValidationScriptsPartial" />
+	}
+}

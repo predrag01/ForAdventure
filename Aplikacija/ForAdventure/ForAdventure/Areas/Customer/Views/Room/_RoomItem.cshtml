@@ -1,0 +1,51 @@
+﻿@model ShoppingCart
+@using System.Globalization;
+<div class="room-item" style="width:80%">
+    <div class="room-stats">
+         <div class="room-type">
+            <p>@Model.Room.RoomType.Type </p>
+         </div>
+         <div class="room-beds-price">
+            <div class="room-beds">
+            @{
+                if (@Model.Room.NumOfBeds == 1)
+                {
+                    <p>@Model.Room.NumOfBeds bed</p>
+                }
+                else
+                {
+                    <p>@Model.Room.NumOfBeds beds</p>
+                }                
+            }
+            </div>
+            <div class="room-price">
+            <p>@Model.Room.PricePerNight.ToString("C", new CultureInfo("en-MNE")) per night </p>
+            </div>
+         </div>
+    </div>
+    <form method="post">
+        <div class="room-form">
+            <input hidden asp-for="@Model.Room.Id"/>
+            <div class="room-date-checkin">
+                <label>Check in:</label>
+                <input type="date" asp-for="@Model.DateFromRoom" required/>
+            </div>
+            <div class="room-date-checkout">
+                <label>Check out:</label>
+                <input type="date" asp-for="@Model.DateToRoom" required />
+            </div>
+            <div class="room-btn-submit d-flex justify-content-center">
+                <input asp-for="@Model.ActivityId" hidden />
+                <input asp-for="@Model.Id" hidden>
+                <input asp-for="@Model.NumberOfPersons" hidden>
+                <input asp-for="@Model.EquipmentId" hidden>
+                <input asp-for="@Model.DateFromEquipment" hidden>
+                <input asp-for="@Model.DateToEquipment" hidden>
+                <input asp-for="@Model.RoomId" hidden>
+                <input asp-for="@Model.DateFromRoom" hidden>
+                <input asp-for="@Model.DateToRoom" hidden>
+                <button type="submit" class="btn btn-primary" style="width:150px"><i class="bi bi-cart"></i>Reserve</button            
+            </div>
+        </div>
+    </form>
+</div>
