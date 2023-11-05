@@ -8,11 +8,11 @@ Timski projekat za potrebe predmeta Softversko inzenjerstvo
 - Mihajlo Cvetkovic - mihajlocvetkovic222@gmail.com
 - Predrag Tosic - predragtosic2001@gmail.com
 
-#Tehnologije:
+# Tehnologije:
 ASP.NET MVC sa .Net 7.0
 JavaScript
 
-#Osnovne funkcionalnosti
+# Osnovne funkcionalnosti
 -Registracija i prijavljivanje korisnika - email, password
 -Registracija i prijavljivanje korisnika - single sign-on(Google)
 -Uredjenje profila
