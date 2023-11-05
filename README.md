@@ -40,4 +40,5 @@ ForAdventure - web aplikacija za organizovanje aktivnog odmora. Timski projekat 
 ![image](https://github.com/predrag01/ForAdventure/assets/130685007/5631b1de-2cfc-4f7d-bdd6-a9aadbf0e947)
 ![image](https://github.com/predrag01/ForAdventure/assets/130685007/f315f732-40fa-475c-84c3-e8d0801e79ae)
 ![image](https://github.com/predrag01/ForAdventure/assets/130685007/24a22129-5348-44c2-9a34-3880b3dcf32d)
+![image](https://github.com/predrag01/ForAdventure/assets/130685007/a8b0c3d8-aabe-4425-9ca6-2b8b8c1dbd1d)
 
