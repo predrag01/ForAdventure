@@ -1,6 +1,5 @@
 # ForAdventure
-ForAdventure - web aplikacija za organizovanje aktivnog odmora
-Timski projekat za potrebe predmeta Softversko inzenjerstvo
+ForAdventure - web aplikacija za organizovanje aktivnog odmora. Timski projekat za potrebe predmeta Softversko inzenjerstvo.
 
 # U izradi projekta ucestvovali:
 - Nikola Djordjevic - nikola.djordje.mail@gmail.com
